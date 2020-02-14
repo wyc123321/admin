@@ -15,7 +15,7 @@ const router = new Router({
       name: 'login',
       component: login,
       meta: {
-        title: '登录',
+        title: '通茂煤运后台管理登录',
         isShow: false
       }
     },
@@ -28,7 +28,7 @@ const router = new Router({
           name: 'address',
           component: address,
           meta: {
-            title: '地址管理',
+            title: '通茂煤运地址管理',
             isShow: true
           }
         },
@@ -37,7 +37,7 @@ const router = new Router({
           name: 'report',
           component: report,
           meta: {
-            title: '报表管理',
+            title: '通茂煤运报表管理',
             isShow: true
           }
         },
@@ -46,7 +46,7 @@ const router = new Router({
           name: 'user',
           component: user,
           meta: {
-            title: '用户管理',
+            title: '通茂煤运用户管理',
             isShow: true
             }
         },
