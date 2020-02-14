@@ -49,7 +49,7 @@
         <img src="../../../static/img/more.png" alt="">
       </span>
             <el-dropdown-menu slot="dropdown" class="header-el-dropdown-menu">
-              <el-dropdown-item  :command="[scope.row,'logout']">编辑</el-dropdown-item>
+              <el-dropdown-item  :command="[scope.row,'edit']">编辑</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -167,20 +167,10 @@
       },
       handleCommand(command) {
         console.log(command)
-        if (command[1] == "password") {
-          this.passwordChangeShow = true;
-        }
-        if (command[1] == "logout") {
-          this.$confirm('确定退出登录吗?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            localStorage.removeItem('adminUser');
-            this.$router.replace('/')
-          }).catch(() => {
-
-          });
+        if (command[1] == "edit") {
+          this.addUserShow = true;
+          this.formTitle='编辑角色';
+          this.formData={}
         }
       },
     }
