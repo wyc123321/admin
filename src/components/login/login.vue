@@ -110,6 +110,7 @@
             .then((response) => {
               if (response.status=='200') {
                 window.localStorage.setItem('token', JSON.stringify(response.data))
+                window.localStorage.setItem('user', JSON.stringify(this.form))
                 this.$router.replace({path: '/navigate'});
               } else {
                 this.$message.error(response.data);

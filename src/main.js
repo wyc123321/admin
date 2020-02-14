@@ -14,22 +14,22 @@ axios.interceptors.request.use(function (config) {
 });
 // Add a response interceptor
 axios.interceptors.response.use(function (response) {
-  // Do something with response data
   return response;
-}, function (err) {
+}, function (error) {
   if (error.response) {
+    console.log(error)
     switch (error.response.status) {
       case 401:
         // 返回 401 清除token信息并跳转到登录页面
         localStorage.removeItem('token')
         router.replace({
-          path: 'login',
+          path: '/login',
           query: {redirect: router.currentRoute.fullPath}
         })
     }
   }
    Message.error(error.response.data);
-  return Promise.reject(err);
+   return Promise.reject(error);
 });
 Vue.prototype.$axios = axios;
 Vue.use(ElementUI);

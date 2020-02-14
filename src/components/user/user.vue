@@ -49,8 +49,8 @@
         <img src="../../../static/img/more.png" alt="">
       </span>
             <el-dropdown-menu slot="dropdown" class="header-el-dropdown-menu">
-              <el-dropdown-item  :command="[scope.row,'edit']">编辑</el-dropdown-item>
-              <el-dropdown-item  :command="[scope.row,'delete']">删除</el-dropdown-item>
+              <el-dropdown-item :command="[scope.row,'edit']">编辑</el-dropdown-item>
+              <el-dropdown-item :command="[scope.row,'delete']">删除</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -71,16 +71,17 @@
         :total="userListData.count" class="page">
       </el-pagination>
       <v-addUserDialog :formShow="addUserShow" v-if="addUserShow"
-                         @handleFormConfirm="handleFormConfirm"
-                         @handleFormClose="handleFormClose"
-                         :formData="formData"
-                         :formTitle="formTitle"></v-addUserDialog>
+                       @handleFormConfirm="handleFormConfirm"
+                       @handleFormClose="handleFormClose"
+                       :formData="formData"
+                       :formTitle="formTitle"></v-addUserDialog>
     </div>
   </div>
 </template>
 
 <script>
   import addUserDialog from './addUserDialog'
+
   export default {
     name: "user",
     data() {
@@ -114,9 +115,10 @@
           rows: [],
           count: 200
         },
-        addUserShow:false,
-        formTitle:'新增角色',
-        formData:{}
+        addUserShow: false,
+        formTitle: '新增角色',
+        formData: {},
+        email: ''
       }
     },
     components: {
@@ -133,7 +135,7 @@
           this.addUserShow = false;
         }
       },
-      addUser(){
+      addUser() {
         this.addUserShow = true;
       },
       // 每页多少条
@@ -161,23 +163,36 @@
         await this.getListData();
         loading.close();
       },
-      getListData() {
+      async getListData() {
         this.offset = (this.page - 1) * this.limit;
         this.userListDataCondition.where.offset = this.offset;
         this.userListDataCondition.where.limit = this.limit;
+        let formData = {
+          "email": this.email,
+          "pageNum": 0
+        }
+        await this.$axios.post(process.env.API_BASE + 'user/list', formData).then(response => {
+          if (response.status == '200') {
+
+          } else {
+            this.$message.error(response.data);
+          }
+        }).catch((error) => {
+
+        })
       },
       handleCommand(command) {
         console.log(command)
         if (command[1] == "edit") {
           this.addUserShow = true;
-          this.formTitle='编辑角色';
-          this.formData={}
+          this.formTitle = '编辑角色';
+          this.formData = {}
         }
         if (command[1] == "delete") {
           this.$confirm('确定退出删除吗?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
-            closeOnClickModal:false,
+            closeOnClickModal: false,
             type: 'warning'
           }).then(() => {
 
@@ -186,6 +201,16 @@
           });
         }
       },
+      init() {
+        let user = JSON.parse(localStorage.getItem('user'));
+        if (user) {
+          this.email = user.email
+        }
+      }
+    },
+    async created() {
+      this.init()
+      await this.getListData()
     }
   }
 </script>
