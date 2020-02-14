@@ -63,14 +63,26 @@
             cancelButtonText: '取消',
             closeOnClickModal: false,
             type: 'warning'
-          }).then(() => {
-            localStorage.removeItem('token')
-            this.$router.replace('/')
+          }).then(async () => {
+             await this.logout()
           }).catch(() => {
 
           });
         }
       },
+      async logout(){
+        await this.$axios.get(process.env.API_BASE + 'logout').then(response => {
+          if (response.status=='200') {
+            localStorage.removeItem('token')
+            this.$router.replace('/')
+            this.$message.success('退出登录成功');
+          } else {
+            this.$message.error(response.data);
+          }
+        }).catch((error) => {
+
+        })
+      }
 
     },
     created() {
