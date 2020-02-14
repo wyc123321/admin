@@ -64,7 +64,7 @@
             closeOnClickModal: false,
             type: 'warning'
           }).then(() => {
-            localStorage.removeItem('adminUser');
+            localStorage.removeItem('token')
             this.$router.replace('/')
           }).catch(() => {
 
