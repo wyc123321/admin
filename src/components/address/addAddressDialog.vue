@@ -23,10 +23,10 @@
           <el-input v-model="ruleForm.phone"></el-input>
         </el-form-item>
         <!--<el-form-item label="角色" prop="role">-->
-          <!--<el-select v-model="ruleForm.role" placeholder="请选择角色">-->
-            <!--<el-option label="区域一" value="shanghai"></el-option>-->
-            <!--<el-option label="区域二" value="beijing"></el-option>-->
-          <!--</el-select>-->
+        <!--<el-select v-model="ruleForm.role" placeholder="请选择角色">-->
+        <!--<el-option label="区域一" value="shanghai"></el-option>-->
+        <!--<el-option label="区域二" value="beijing"></el-option>-->
+        <!--</el-select>-->
         <!--</el-form-item>-->
       </el-form>
     </div>

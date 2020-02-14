@@ -10,13 +10,15 @@
             <el-form-item label="邮箱" prop="username">
               <div class="divContainer">
                 <i class="email"></i>
-                <el-input v-model="form.username" placeholder="请输入邮箱" @keyup.enter.native="onSubmit('form')" style="width: 300px"></el-input>
+                <el-input v-model="form.username" placeholder="请输入邮箱" @keyup.enter.native="onSubmit('form')"
+                          style="width: 300px"></el-input>
               </div>
             </el-form-item>
             <el-form-item label="密码" prop="password">
               <div class="divContainer">
                 <i class="password"></i>
-                <el-input type="password" placeholder="请输入密码" v-model="form.password" @keyup.enter.native="onSubmit('form')"
+                <el-input type="password" placeholder="请输入密码" v-model="form.password"
+                          @keyup.enter.native="onSubmit('form')"
                           style="width: 300px"></el-input>
               </div>
             </el-form-item>
@@ -141,7 +143,7 @@
     height: 100%;
   }
 
-  
+
   .loginContent {
     display: flex;
     align-items: center;
@@ -169,27 +171,32 @@
     font-weight: bold;
     margin-left: -30px;
   }
-  .logoTitle img{
+
+  .logoTitle img {
     width: 166px;
   }
+
   .codeImg {
     width: 50px;
     cursor: pointer;
   }
 
   .codeWarp {
-   position: relative;
+    position: relative;
   }
-  .codeWarp img{
+
+  .codeWarp img {
     position: absolute;
-    height:35px;
+    height: 35px;
     right: 20px;
     top: 3px;
   }
-  .divContainer{
+
+  .divContainer {
     position: relative;
   }
-  .divContainer .email{
+
+  .divContainer .email {
     /*position: absolute;*/
     /*width: 20px;*/
     /*height: 20px;*/

@@ -61,7 +61,7 @@
           this.$confirm('确定退出登录吗?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
-            closeOnClickModal:false,
+            closeOnClickModal: false,
             type: 'warning'
           }).then(() => {
             localStorage.removeItem('adminUser');
@@ -109,34 +109,38 @@
     cursor: pointer;
     margin-right: 92px;
   }
+
   .navigate .navLeft ul li a {
-    height:36px;
+    height: 36px;
     line-height: 36px;
     text-align: center;
-    font-size:16px;
-    font-weight:400;
-    color:rgba(255,255,255,1);
+    font-size: 16px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 1);
     padding: 0 15px;
     display: block;
-    border-radius:4px;
+    border-radius: 4px;
   }
+
   .navigate .navLeft ul li a.router-link-active {
-    height:36px;
+    height: 36px;
     line-height: 36px;
     text-align: center;
-    font-size:16px;
-    font-weight:400;
-    color:rgba(255,255,255,1);
+    font-size: 16px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 1);
     padding: 0 15px;
-    background:rgba(255,255,255,0.25);
+    background: rgba(255, 255, 255, 0.25);
     display: block;
-    border-radius:4px;
+    border-radius: 4px;
   }
-  .navigate .navLeft ul li{
+
+  .navigate .navLeft ul li {
     margin-right: 30px;
   }
-  .dropdown{
-    color:rgba(255,255,255,1);
+
+  .dropdown {
+    color: rgba(255, 255, 255, 1);
     font-size: 18px;
   }
 </style>
