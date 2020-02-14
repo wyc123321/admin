@@ -17,36 +17,39 @@
       </div>
       <div>
         <el-dropdown @command="handleCommand" class="dropdown">
-          <i class="el-icon-caret-bottom"><span>{{user.realName}}</span></i>
+          <i class="el-icon-caret-bottom"><span>{{email}}</span></i>
           <el-dropdown-menu slot="dropdown" class="header-el-dropdown-menu">
+            <el-dropdown-item command="password">修改密码</el-dropdown-item>
             <el-dropdown-item command="logout">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
     </header>
     <router-view></router-view>
+    <v-password v-if="passwordChangeShow" :formShow="passwordChangeShow"
+                     @handleFormClose="handleFormClose"></v-password>
   </div>
 </template>
 <script>
+  import password from './password'
   export default {
     computed: {},
     data() {
       return {
-        user: {
-          realName: 'xxxxxxxx'
-        }
+        email: '',
+        passwordChangeShow: false
       }
     },
-    components: {},
+    components: {
+      'v-password':password
+    },
     methods: {
       //响应组件关闭事件
       handleFormClose(code) {
         if (code == "passwordChange") {
           this.passwordChangeShow = false;
         }
-        if (code == "notify") {
-          this.notifyShow = false;
-        }
+
       },
       async handleFormConfirm(code, formData) {
         if (code == "notify") {
@@ -64,15 +67,15 @@
             closeOnClickModal: false,
             type: 'warning'
           }).then(async () => {
-             await this.logout()
+            await this.logout()
           }).catch(() => {
 
           });
         }
       },
-      async logout(){
+      async logout() {
         await this.$axios.get(process.env.API_BASE + 'logout').then(response => {
-          if (response.status=='200') {
+          if (response.status == '200') {
             localStorage.removeItem('token')
             this.$router.replace('/')
             this.$message.success('退出登录成功');
@@ -82,11 +85,17 @@
         }).catch((error) => {
 
         })
+      },
+      init() {
+        let user = JSON.parse(localStorage.getItem('user'));
+        if (user) {
+          this.email = user.email
+        }
       }
 
     },
     created() {
-
+         this.init()
     },
 
   }
