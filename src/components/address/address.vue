@@ -51,6 +51,7 @@
       </span>
             <el-dropdown-menu slot="dropdown" class="header-el-dropdown-menu">
               <el-dropdown-item  :command="[scope.row,'edit']">编辑</el-dropdown-item>
+              <el-dropdown-item  :command="[scope.row,'delete']">删除</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -176,6 +177,17 @@
           this.addressDialogShow = true;
           this.formTitle='编辑地址';
           this.formData={}
+        } if (command[1] == "delete") {
+          this.$confirm('确定退出删除吗?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            closeOnClickModal:false,
+            type: 'warning'
+          }).then(() => {
+
+          }).catch(() => {
+
+          });
         }
       },
     }

@@ -61,6 +61,7 @@
           this.$confirm('确定退出登录吗?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
+            closeOnClickModal:false,
             type: 'warning'
           }).then(() => {
             localStorage.removeItem('adminUser');
