@@ -11,8 +11,8 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-     '/acc': {
-       target: "http://test.yinuojizhang.com/acc/api/v1/",changeOrigin: true,pathRewrite: {'^/acc': '/'}
+     '/base': {
+       target: "http://tmmy.guokaizhengxin.com/",changeOrigin: true,pathRewrite: {'^/base': '/'}
       },
    },
 

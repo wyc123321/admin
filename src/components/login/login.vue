@@ -7,10 +7,10 @@
             <el-form-item label=" " prop="">
               <p class="logoTitle"><img src="../../../static/img/logo.png" alt=""></p>
             </el-form-item>
-            <el-form-item label="邮箱" prop="username">
+            <el-form-item label="邮箱" prop="email">
               <div class="divContainer">
                 <i class="email"></i>
-                <el-input v-model="form.username" placeholder="请输入邮箱" @keyup.enter.native="onSubmit('form')"
+                <el-input v-model="form.email" placeholder="请输入邮箱" @keyup.enter.native="onSubmit('form')"
                           style="width: 300px"></el-input>
               </div>
             </el-form-item>
@@ -22,12 +22,12 @@
                           style="width: 300px"></el-input>
               </div>
             </el-form-item>
-            <el-form-item label="验证码" prop="code">
+            <el-form-item label="验证码" prop="captchaCode">
               <div class="codeWarp divContainer">
                 <i class="code"></i>
-                <el-input v-model="form.code" placeholder="请输入验证码" @keyup.enter.native="onSubmit('form')"
+                <el-input v-model="form.captchaCode" placeholder="请输入验证码" @keyup.enter.native="onSubmit('form')"
                           style="width: 300px"></el-input>
-                <img src="../../../static/img/yanzhen.png" alt="" class="codeImg">
+                <img :src="imgSrc" alt="" class="codeImg" @click="getCode">
               </div>
             </el-form-item>
             <el-form-item>
@@ -64,7 +64,7 @@
           callback();
         }
       }
-      var code = (rule, value, callback) => {
+      var captchaCode = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('验证码不能为空'));
         } else {
@@ -73,21 +73,23 @@
       }
       return {
         form: {
-          username: "",
-          password: "",
-          code: "",
+          "captchaCode": "",
+          "captchaId": "",
+          "email": "",
+          "password": ""
         },
         rules: {
           password: [
             {validator: validatePass, trigger: 'blur'}
           ],
-          username: [
+          email: [
             {validator: checkEmail, trigger: 'blur'}
           ],
-          code: [
-            {validator: code, trigger: 'blur'}
+          captchaCode: [
+            {validator: captchaCode, trigger: 'blur'}
           ]
         },
+        imgSrc:require('../../../static/img/yanzhen.png')
       }
     },
     methods: {
@@ -96,36 +98,59 @@
         if (valid) {
           let loading = this.$loading({
             lock: true,
-            text: '正在加载，请稍候',
+            text: '正在登录，请稍候',
             spinner: 'el-icon-loading',
             background: 'rgba(0, 0, 0, 0.7)'
           });
           //登录注册相关接口不能带token，所以单独处理
-          // var instance = this.$axios.create({
-          //   headers: {'Content-Type': 'application/json'}
-          // });
-          // await instance.post(process.env.API_YINUO + 'api/login', this.form)
-          //   .then((response) => {
-          //     loading.close();
-          //     if (response.data.success) {
-          //       window.localStorage.setItem('adminUser', JSON.stringify(response.data.data))
-          //       this.$router.replace({path: '/navigate'});
-          //     } else {
-          //       this.$message.error(response.data.message);
-          //     }
-          //   })
-          //   .catch((error) => {
-          //     loading.close();
-          //     console.log(error);
-          //     this.$message.error("登录失败，服务器错误")
-          //   });
-          this.$router.replace({path: '/navigate'});
+          var instance = this.$axios.create({
+            headers: {'Content-Type': 'application/json'}
+          });
+          await instance.post(process.env.API_BASE + 'login', this.form)
+            .then((response) => {
+              if (response.status=='200') {
+                window.localStorage.setItem('adminUser', JSON.stringify(response.data.data))
+                this.$router.replace({path: '/navigate'});
+              } else {
+                this.$message.error(response.data);
+              }
+            })
+            .catch((error) => {
+              if (error.response) {
+                this.$message.error(error.response.data);
+              } else if (error.request) {
+                console.log(error.request);
+              } else {
+                console.log('Error', error.message);
+              }
+              console.log(error.config);
+            });
           loading.close();
         } else {
           console.log('error submit!!');
           return false;
         }
       },
+      async getCode() {
+        var instance = this.$axios.create({
+          headers: {'Content-Type': 'application/json'}
+        });
+        await instance.get(process.env.API_BASE + 'common/getCaptcha?date='+Date.now())
+          .then((response) => {
+            if (response.status=='200') {
+              this.imgSrc = response.data.base64Code;
+              this.form.captchaId = response.data.key;
+            } else {
+              this.$message.error(response.data.msg);
+            }
+          })
+          .catch((error) => {
+            // console.log(error);
+          });
+      }
+    },
+    async created() {
+      await this.getCode()
     }
   }
 </script>
@@ -177,7 +202,7 @@
   }
 
   .codeImg {
-    width: 50px;
+    width: 135px;
     cursor: pointer;
   }
 
