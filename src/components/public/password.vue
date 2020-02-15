@@ -78,7 +78,7 @@
           password: [{required: true, validator: validatePass}],
           confirmPassword: [{required: true, validator: validatePass2}],
           captchaCode: [
-            {validator: captchaCode, trigger: 'blur'}
+            {validator: captchaCode,required: true, trigger: 'blur'}
           ]
         },
         imgSrc: ''
