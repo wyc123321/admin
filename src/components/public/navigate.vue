@@ -16,8 +16,8 @@
         </ul>
       </div>
       <div>
-        <el-dropdown @command="handleCommand" class="dropdown">
-          <i class="el-icon-caret-bottom"><span>{{email}}</span></i>
+        <el-dropdown  @command="handleCommand" class="dropdown">
+          <span>{{email}}<i class="el-icon-caret-bottom"></i></span>
           <el-dropdown-menu slot="dropdown" class="header-el-dropdown-menu">
             <el-dropdown-item command="password">修改密码</el-dropdown-item>
             <el-dropdown-item command="logout">退出登录</el-dropdown-item>
