@@ -109,15 +109,16 @@
           await instance.post(process.env.API_BASE + 'login', this.form)
             .then((response) => {
               if (response.status == '200') {
-                window.localStorage.setItem('token', JSON.stringify(response.data))
-                window.localStorage.setItem('user', JSON.stringify(this.form))
+                window.localStorage.setItem('token', JSON.stringify(response.data));
+                window.localStorage.setItem('user', JSON.stringify(this.form));
                 this.$router.replace({path: '/navigate'});
               } else {
                 this.$message.error(response.data);
               }
             })
-            .catch((error) => {
+            .catch(async (error) => {
               if (error.response) {
+                await this.getCode();
                 this.$message.error(error.response.data);
               } else if (error.request) {
                 console.log(error.request);

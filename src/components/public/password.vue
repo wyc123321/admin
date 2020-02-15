@@ -120,8 +120,8 @@
                   this.$message.error(response.data.message);
                 }
               })
-              .catch(function (error) {
-                console.log(error)
+              .catch(async (error)=> {
+                await this.getCode();
               });
             loading.close();
           } else {
