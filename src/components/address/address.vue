@@ -51,7 +51,7 @@
       </span>
             <el-dropdown-menu slot="dropdown" class="header-el-dropdown-menu">
               <el-dropdown-item :command="[scope.row,'edit']">编辑</el-dropdown-item>
-              <el-dropdown-item :command="[scope.row,'delete']">删除</el-dropdown-item>
+              <el-dropdown-item :command="[scope.row,'forbidden']">禁用账号</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -63,13 +63,11 @@
     </el-table>
     <div class="pagination">
       <el-pagination
-        @size-change="handleSizeChange"
         @current-change="handlePageChange"
-        layout="sizes,total, prev, pager, next"
-        :page-sizes="[20,50,100]"
-        :page-size="limit"
         :current-page.sync="page"
-        :total="userListData.count" class="page">
+        :page-size="10"
+        layout="prev, pager, next, jumper"
+        :total="count" class="page">
       </el-pagination>
       <v-addressDialog :formShow="addressDialogShow" v-if="addressDialogShow"
                        @handleFormConfirm="handleFormConfirm"
@@ -118,7 +116,8 @@
         },
         addressDialogShow: false,
         formTitle: '新增地址',
-        formData: {}
+        formData: {},
+        count:0
       }
     },
     components: {
@@ -163,10 +162,21 @@
         await this.getListData();
         loading.close();
       },
-      getListData() {
-        this.offset = (this.page - 1) * this.limit;
-        this.userListDataCondition.where.offset = this.offset;
-        this.userListDataCondition.where.limit = this.limit;
+     async getListData() {
+        let formData = {
+          "regionCode": '',
+          "pageNum": this.page
+        }
+        await this.$axios.post(process.env.API_BASE + 'address/list', formData).then(response => {
+          if (response.status == '200') {
+            this.tableData = response.data.recordList
+            this.count = response.data.pageCount
+          } else {
+            this.$message.error(response.data);
+          }
+        }).catch((error) => {
+
+        })
       },
       handleClick(row) {
         console.log(row)
@@ -190,6 +200,34 @@
 
           });
         }
+        if (command[1] == "forbidden") {
+          this.$confirm('确定禁用吗?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            closeOnClickModal: false,
+            type: 'warning'
+          }).then(async () => {
+            await this.forbidden(command[0])
+          }).catch(() => {
+
+          });
+        }
+      },
+      async forbidden(row) {
+        await this.$axios.post(process.env.API_BASE + 'address/forbidden', {
+          userId: row.id
+        })
+          .then((response) => {
+            if (response.status == '200') {
+              this.$message.success("禁用成功");
+            } else {
+              this.$message.error(response.data.message);
+            }
+          })
+          .catch(function (error) {
+            this.$message.error(error);
+          });
+        await this.getListData();
       },
     }
   }

@@ -19,8 +19,8 @@
         <el-form-item label="区/县" prop="phone">
           <el-input v-model="ruleForm.phone"></el-input>
         </el-form-item>
-        <el-form-item label="地址名称" prop="phone">
-          <el-input v-model="ruleForm.phone"></el-input>
+        <el-form-item label="地址名称" prop="name">
+          <el-input v-model="ruleForm.name"></el-input>
         </el-form-item>
         <!--<el-form-item label="角色" prop="role">-->
         <!--<el-select v-model="ruleForm.role" placeholder="请选择角色">-->
@@ -70,6 +70,7 @@
           email: '',
           phone: '',
           role: '',
+          regionCode:''
         },
         rules: {
           name: [
@@ -111,6 +112,21 @@
             return false;
           }
         });
+      },
+      async addAddress() {
+        this.loading = true;
+        let ruleForm = JSON.parse(JSON.stringify(this.ruleForm));
+        ruleForm.roleType = Number(ruleForm.roleType);
+        await this.$axios.post(process.env.API_BASE + 'address/add', ruleForm).then(response => {
+          if (response.status == '200') {
+            this.$emit('handleFormConfirm', 'addUserDialog')
+          } else {
+            this.$message.error(response.data);
+          }
+        }).catch((error) => {
+
+        })
+        this.loading = false;
       },
       cancle() {
         this.$emit('handleFormClose', 'addAddressDialog')
