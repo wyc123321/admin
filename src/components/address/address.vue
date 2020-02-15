@@ -126,7 +126,7 @@
       },
       async getListData() {
         let formData = {
-          "regionCode": '11',
+          "regionCode": '110000',
           "pageNum": this.page
         }
         await this.$axios.post(process.env.API_BASE + 'address/list', formData).then(response => {
@@ -203,8 +203,15 @@
       },
     },
     async created() {
+      const loading = this.$loading({
+        lock: true,
+        text: '加载.....',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      });
       await this.queryRegion();
       await this.getListData();
+      loading.close();
     }
   }
 </script>

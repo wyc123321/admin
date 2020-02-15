@@ -31,10 +31,10 @@
             :value="item.value">
           </el-option>
         </el-select>
-        <el-button type="primary" icon="el-icon-search"size="mini">搜索</el-button>
+        <el-button type="primary" icon="el-icon-search" size="mini">搜索</el-button>
       </div>
       <div>
-        <el-button type="primary" icon="el-icon-download"size="mini">下载</el-button>
+        <el-button type="primary" icon="el-icon-download" size="mini">下载</el-button>
       </div>
     </div>
     <el-table
@@ -133,13 +133,11 @@
     </el-table>
     <div class="pagination">
       <el-pagination
-        @size-change="handleSizeChange"
         @current-change="handlePageChange"
-        layout="sizes,total, prev, pager, next"
-        :page-sizes="[20,50,100]"
-        :page-size="limit"
         :current-page.sync="page"
-        :total="userListData.count" class="page">
+        :page-size="10"
+        layout="prev, pager, next, jumper"
+        :total="count" class="page">
       </el-pagination>
     </div>
   </div>
@@ -148,11 +146,11 @@
 <script>
   export default {
     name: "report",
-    data(){
+    data() {
       return {
-        userInput:'',
-        formData:{
-          entryDate:''
+        userInput: '',
+        formData: {
+          entryDate: ''
         },
         tableData: [{
           date: '2016-05-02',
@@ -171,17 +169,7 @@
           name: '王小虎',
           address: '上海市普陀区金沙江路 1516 弄'
         }],
-        offset: 0,
-        limit: 20,
         page: 1,
-        //顶部检索类型，及初始值
-        userListDataCondition: {
-          where: {},
-        },
-        userListData: {
-          rows: [],
-          count: 200
-        },
         options: [{
           value: '选项1',
           label: '黄金糕'
@@ -198,9 +186,10 @@
           value: '选项5',
           label: '北京烤鸭'
         }],
+        count: 200
       }
     },
-    methods:{
+    methods: {
       // 每页多少条
       async handleSizeChange(val) {
         const loading = this.$loading({
@@ -209,7 +198,6 @@
           spinner: 'el-icon-loading',
           background: 'rgba(0, 0, 0, 0.7)'
         });
-        this.limit = val;
         this.page = 1;
         await this.getListData();
         loading.close();
@@ -226,51 +214,51 @@
         await this.getListData();
         loading.close();
       },
-      getListData(){
-        this.offset = (this.page - 1) * this.limit;
-        this.userListDataCondition.where.offset = this.offset;
-        this.userListDataCondition.where.limit = this.limit;
+      async getListData() {
+
       },
       handleCommand(command) {
         if (command == "password") {
           this.passwordChangeShow = true;
         }
-        if (command == "logout") {
-          this.$confirm('确定退出登录吗?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            localStorage.removeItem('adminUser');
-            this.$router.replace('/')
-          }).catch(() => {
-
-          });
-        }
       },
+    },
+    async created() {
+      const loading = this.$loading({
+        lock: true,
+        text: '加载.....',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      });
+      await this.getListData();
+      loading.close();
     }
   }
 </script>
 
 <style scoped>
-  .search{
+  .search {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 30px;
   }
-  .search .el-input{
+
+  .search .el-input {
     width: 180px !important;
   }
-  .search div span{
-    font-size:16px;
-    font-family:Microsoft YaHei;
-    font-weight:400;
-    color:rgba(102,102,102,1);
+
+  .search div span {
+    font-size: 16px;
+    font-family: Microsoft YaHei;
+    font-weight: 400;
+    color: rgba(102, 102, 102, 1);
   }
-  .span2{
+
+  .span2 {
     margin-left: 20px;
   }
+
   .pagination {
     height: 40px;
     display: flex;

@@ -89,7 +89,7 @@
             {validator: captchaCode, trigger: 'blur'}
           ]
         },
-        imgSrc:require('../../../static/img/yanzhen.png')
+        imgSrc: require('../../../static/img/yanzhen.png')
       }
     },
     methods: {
@@ -108,7 +108,7 @@
           });
           await instance.post(process.env.API_BASE + 'login', this.form)
             .then((response) => {
-              if (response.status=='200') {
+              if (response.status == '200') {
                 window.localStorage.setItem('token', JSON.stringify(response.data))
                 window.localStorage.setItem('user', JSON.stringify(this.form))
                 this.$router.replace({path: '/navigate'});
@@ -136,9 +136,9 @@
         var instance = this.$axios.create({
           headers: {'Content-Type': 'application/json'}
         });
-        await instance.get(process.env.API_BASE + 'common/getCaptcha?date='+Date.now())
+        await instance.get(process.env.API_BASE + 'common/getCaptcha?date=' + Date.now())
           .then((response) => {
-            if (response.status=='200') {
+            if (response.status == '200') {
               this.imgSrc = response.data.base64Code;
               this.form.captchaId = response.data.key;
             } else {

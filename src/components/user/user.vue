@@ -197,8 +197,15 @@
       }
     },
     async created() {
+      const loading = this.$loading({
+        lock: true,
+        text: '加载.....',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      });
       this.init();
-      await this.getListData()
+      await this.getListData();
+      loading.close();
     }
   }
 </script>

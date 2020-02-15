@@ -27,11 +27,12 @@
     </header>
     <router-view></router-view>
     <v-password v-if="passwordChangeShow" :formShow="passwordChangeShow"
-                     @handleFormClose="handleFormClose"></v-password>
+                @handleFormClose="handleFormClose"></v-password>
   </div>
 </template>
 <script>
   import password from './password'
+
   export default {
     computed: {},
     data() {
@@ -41,7 +42,7 @@
       }
     },
     components: {
-      'v-password':password
+      'v-password': password
     },
     methods: {
       //响应组件关闭事件
@@ -95,7 +96,7 @@
 
     },
     created() {
-         this.init()
+      this.init()
     },
 
   }

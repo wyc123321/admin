@@ -78,7 +78,7 @@
           password: [{required: true, validator: validatePass}],
           confirmPassword: [{required: true, validator: validatePass2}],
           captchaCode: [
-            {validator: captchaCode,required: true, trigger: 'blur'}
+            {validator: captchaCode, required: true, trigger: 'blur'}
           ]
         },
         imgSrc: ''
@@ -123,7 +123,7 @@
               .catch(function (error) {
                 console.log(error)
               });
-              loading.close();
+            loading.close();
           } else {
             return false;
           }
