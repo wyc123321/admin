@@ -60,7 +60,7 @@
     list-style: none;
   }
   .root{
-    height: calc(100% - 90px);
+    height: calc(100% - 110px);
     padding: 30px 20px;
      box-sizing: border-box;
     background:rgba(255,255,255,1);
@@ -68,8 +68,7 @@
     margin: 0 30px;
   }
   .footer {
-    height: 40px;
-    line-height: 40px;
+    height: 60px;
     text-align: center;
     font-size: 14px;
     color: #999;
