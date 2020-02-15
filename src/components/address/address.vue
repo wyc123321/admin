@@ -72,7 +72,7 @@
       <v-addressDialog :formShow="addressDialogShow" v-if="addressDialogShow"
                        @handleFormConfirm="handleFormConfirm"
                        @handleFormClose="handleFormClose"
-                       :formData="formData"
+                       :formData="formData" :regionList="regionList"
                        :formTitle="formTitle"></v-addressDialog>
     </div>
   </div>
@@ -86,38 +86,13 @@
     data() {
       return {
         userInput: '',
-        tableData: [{
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }],
-        offset: 0,
-        limit: 20,
+        tableData: [],
         page: 1,
-        //顶部检索类型，及初始值
-        userListDataCondition: {
-          where: {},
-        },
-        userListData: {
-          rows: [],
-          count: 200
-        },
         addressDialogShow: false,
         formTitle: '新增地址',
         formData: {},
-        count:0
+        count: 0,
+        regionList: []
       }
     },
     components: {
@@ -137,19 +112,6 @@
       add() {
         this.addressDialogShow = true;
       },
-      // 每页多少条
-      async handleSizeChange(val) {
-        const loading = this.$loading({
-          lock: true,
-          text: '加载中',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
-        this.limit = val;
-        this.page = 1;
-        await this.getListData();
-        loading.close();
-      },
       //翻页触发的方法
       async handlePageChange(val) {
         const loading = this.$loading({
@@ -162,14 +124,14 @@
         await this.getListData();
         loading.close();
       },
-     async getListData() {
+      async getListData() {
         let formData = {
-          "regionCode": '',
+          "regionCode": '11',
           "pageNum": this.page
         }
         await this.$axios.post(process.env.API_BASE + 'address/list', formData).then(response => {
           if (response.status == '200') {
-            this.tableData = response.data.recordList
+            // this.tableData = response.data.recordList
             this.count = response.data.pageCount
           } else {
             this.$message.error(response.data);
@@ -177,9 +139,6 @@
         }).catch((error) => {
 
         })
-      },
-      handleClick(row) {
-        console.log(row)
       },
       handleCommand(command) {
         console.log(command)
@@ -229,6 +188,23 @@
           });
         await this.getListData();
       },
+      async queryRegion() {
+        await this.$axios.get(process.env.API_BASE + 'common/queryRegion')
+          .then((response) => {
+            if (response.status == '200') {
+              this.regionList = response.data;
+            } else {
+              this.$message.error(response.data.msg);
+            }
+          })
+          .catch(function (error) {
+            this.$message.error(error);
+          });
+      },
+    },
+    async created() {
+      await this.queryRegion();
+      await this.getListData();
     }
   }
 </script>

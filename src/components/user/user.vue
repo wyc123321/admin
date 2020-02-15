@@ -86,22 +86,12 @@
       return {
         userInput: '',
         tableData: [],
-        offset: 0,
-        limit: 20,
         page: 1,
-        //顶部检索类型，及初始值
-        userListDataCondition: {
-          where: {},
-        },
-        userListData: {
-          rows: [],
-          count: 200
-        },
         addUserShow: false,
         formTitle: '新增角色',
         formData: {},
         email: '',
-        count:0
+        count: 0
       }
     },
     components: {
@@ -142,8 +132,8 @@
         }
         await this.$axios.post(process.env.API_BASE + 'user/list', formData).then(response => {
           if (response.status == '200') {
-              this.tableData = response.data.recordList
-              this.count = response.data.pageCount
+            this.tableData = response.data.recordList
+            this.count = response.data.pageCount
           } else {
             this.$message.error(response.data);
           }
@@ -197,7 +187,7 @@
           .catch(function (error) {
             this.$message.error(error);
           });
-          await this.getListData();
+        await this.getListData();
       },
       init() {
         let user = JSON.parse(localStorage.getItem('user'));
@@ -207,7 +197,7 @@
       }
     },
     async created() {
-      this.init()
+      this.init();
       await this.getListData()
     }
   }

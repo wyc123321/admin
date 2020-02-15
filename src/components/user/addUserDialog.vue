@@ -99,7 +99,7 @@
       },
     },
     methods: {
-      async handleSubmit() {
+      handleSubmit() {
         this.$refs['ruleForm'].validate(async (valid) => {
           if (valid) {
             await this.addRole()
