@@ -24,19 +24,19 @@
         width="120">
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="email"
         header-align="center"
         align="center"
         label="邮箱">
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="phoneNumber"
         header-align="center"
         align="center"
         label="手机号码">
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="roleType"
         header-align="center"
         align="center"
         label="角色">
@@ -63,13 +63,11 @@
     </el-table>
     <div class="pagination">
       <el-pagination
-        @size-change="handleSizeChange"
         @current-change="handlePageChange"
-        layout="sizes,total, prev, pager, next"
-        :page-sizes="[20,50,100]"
-        :page-size="limit"
         :current-page.sync="page"
-        :total="userListData.count" class="page">
+        :page-size="10"
+        layout="prev, pager, next, jumper"
+        :total="count" class="page">
       </el-pagination>
       <v-addUserDialog :formShow="addUserShow" v-if="addUserShow"
                        @handleFormConfirm="handleFormConfirm"
@@ -88,23 +86,7 @@
     data() {
       return {
         userInput: '',
-        tableData: [{
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }],
+        tableData: [],
         offset: 0,
         limit: 20,
         page: 1,
@@ -119,7 +101,8 @@
         addUserShow: false,
         formTitle: '新增角色',
         formData: {},
-        email: ''
+        email: '',
+        count:0
       }
     },
     components: {
@@ -134,23 +117,12 @@
       async handleFormConfirm(code, data) {
         if (code == "addUserDialog") {
           this.addUserShow = false;
+          this.page = 1;
+          await this.getListData()
         }
       },
       addUser() {
         this.addUserShow = true;
-      },
-      // 每页多少条
-      async handleSizeChange(val) {
-        const loading = this.$loading({
-          lock: true,
-          text: '加载中',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
-        this.limit = val;
-        this.page = 1;
-        await this.getListData();
-        loading.close();
       },
       //翻页触发的方法
       async handlePageChange(val) {
@@ -165,16 +137,14 @@
         loading.close();
       },
       async getListData() {
-        this.offset = (this.page - 1) * this.limit;
-        this.userListDataCondition.where.offset = this.offset;
-        this.userListDataCondition.where.limit = this.limit;
         let formData = {
           "email": this.email,
-          "pageNum": 0
+          "pageNum": this.page
         }
         await this.$axios.post(process.env.API_BASE + 'user/list', formData).then(response => {
           if (response.status == '200') {
-
+              this.tableData = response.data.recordList
+              this.count = response.data.pageCount
           } else {
             this.$message.error(response.data);
           }
@@ -228,7 +198,7 @@
           .catch(function (error) {
             this.$message.error(error);
           });
-        await this.getListData();
+          await this.getListData();
       },
       init() {
         let user = JSON.parse(localStorage.getItem('user'));

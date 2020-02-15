@@ -10,26 +10,25 @@
     top="8vh" class="addIncomeDialog">
     <div>
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" size="mini">
-        <el-form-item label="姓名" prop="name">
-          <el-input v-model="ruleForm.name"></el-input>
-        </el-form-item>
+        <!--<el-form-item label="姓名" prop="name">-->
+        <!--<el-input v-model="ruleForm.name"></el-input>-->
+        <!--</el-form-item>-->
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="ruleForm.email"></el-input>
         </el-form-item>
         <el-form-item label="手机号码" prop="phoneNumber">
           <el-input v-model="ruleForm.phoneNumber"></el-input>
         </el-form-item>
-        <el-form-item label="角色" prop="role">
-          <el-select v-model="ruleForm.role" placeholder="请选择角色">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+        <el-form-item label="角色" prop="roleType">
+          <el-select v-model="ruleForm.roleType" placeholder="请选择角色">
+            <el-option label="管理员" value="0"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
     </div>
     <div slot="footer" class="dialog-footer">
       <el-button size="mini" @click="cancle">取消</el-button>
-      <el-button type="primary" size="mini" @click="handleSubmit()">确定</el-button>
+      <el-button type="primary" size="mini" :loading="loading" @click="handleSubmit()">确定</el-button>
     </div>
   </el-dialog>
 </template>
@@ -63,17 +62,17 @@
       };
       return {
         ruleForm: {
-          name: '',
+          // name: '',
           email: '',
           phoneNumber: '',
-          role: '',
+          roleType: '',
         },
         rules: {
           name: [
             {required: true, message: '请输入姓名'},
             {min: 3, max: 5, message: '长度在 3 到 5 个字符'}
           ],
-          role: [
+          roleType: [
             {required: true, message: '请选择角色', trigger: 'change'}
           ],
           phoneNumber: [
@@ -84,7 +83,8 @@
             {required: true, message: '邮箱不能为空'},
             {validator: checkEmail}
           ],
-        }
+        },
+        loading: false
       }
     },
     props: {
@@ -100,14 +100,28 @@
     },
     methods: {
       async handleSubmit() {
-        this.$refs['ruleForm'].validate((valid) => {
+        this.$refs['ruleForm'].validate(async (valid) => {
           if (valid) {
-            this.$emit('handleFormClose', 'addUserDialog')
+            await this.addRole()
           } else {
-            console.log('error submit!!');
             return false;
           }
         });
+      },
+      async addRole() {
+        this.loading = true;
+        let ruleForm = JSON.parse(JSON.stringify(this.ruleForm));
+        ruleForm.roleType = Number(ruleForm.roleType);
+        await this.$axios.post(process.env.API_BASE + 'user/add', ruleForm).then(response => {
+          if (response.status == '200') {
+            this.$emit('handleFormConfirm', 'addUserDialog')
+          } else {
+            this.$message.error(response.data);
+          }
+        }).catch((error) => {
+
+        })
+        this.loading = false;
       },
       cancle() {
         this.$emit('handleFormClose', 'addUserDialog')

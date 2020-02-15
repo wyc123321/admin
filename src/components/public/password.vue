@@ -14,12 +14,12 @@
         </el-form-item>
 
         <el-form-item label="新密码" prop="password">
-          <el-input type="password"
+          <el-input type="password" show-password
                     v-model="formData.password"></el-input>
         </el-form-item>
 
         <el-form-item label="确认密码" prop="confirmPassword">
-          <el-input type="password"
+          <el-input type="password" show-password
                     v-model="formData.confirmPassword"></el-input>
         </el-form-item>
         <el-form-item label="验证码" prop="captchaCode">
@@ -121,9 +121,9 @@
                 }
               })
               .catch(function (error) {
-                this.$message.error(error);
+                console.log(error)
               });
-            loading.close();
+              loading.close();
           } else {
             return false;
           }
