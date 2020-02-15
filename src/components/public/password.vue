@@ -7,9 +7,9 @@
     :close-on-press-escape="false" append-to-body
     width="500px">
     <div class="dialog">
-      <el-form  :model="formData" :rules="rules" ref="ruleForm" label-width="90px" size="small">
+      <el-form :model="formData" :rules="rules" ref="ruleForm" label-width="90px" size="small">
         <el-form-item label="原密码" prop="oldPassword">
-          <el-input type="password"  show-password auto-complete="new-password"
+          <el-input type="password" show-password auto-complete="new-password"
                     v-model="formData.oldPassword"></el-input>
         </el-form-item>
 
@@ -23,10 +23,10 @@
                     v-model="formData.confirmPassword"></el-input>
         </el-form-item>
         <el-form-item label="验证码" prop="captchaCode">
-           <div class="captchaCode">
-             <el-input v-model="formData.captchaCode"></el-input>
-             <img :src="imgSrc" alt="" @click="getCode">
-           </div>
+          <div class="captchaCode">
+            <el-input v-model="formData.captchaCode"></el-input>
+            <img :src="imgSrc" alt="" @click="getCode">
+          </div>
         </el-form-item>
       </el-form>
     </div>
@@ -38,7 +38,7 @@
 </template>
 <script>
   export default {
-    data(){
+    data() {
       var validatePass = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入密码'));
@@ -66,78 +66,73 @@
         }
       }
       return {
-        formData:{
-          oldPassword:"",
-          password:"",
-          confirmPassword:"",
-          captchaCode:"",
+        formData: {
+          oldPassword: "",
+          password: "",
+          confirmPassword: "",
+          captchaCode: "",
           captchaId: "",
         },
-        rules:{
-          oldPassword:[{ required: true,message:'请输入原始密码'}],
-          password:[{ required: true,validator:validatePass}],
-          confirmPassword:[{ required: true,validator:validatePass2}],
+        rules: {
+          oldPassword: [{required: true, message: '请输入原始密码'}],
+          password: [{required: true, validator: validatePass}],
+          confirmPassword: [{required: true, validator: validatePass2}],
           captchaCode: [
             {validator: captchaCode, trigger: 'blur'}
           ]
         },
-        imgSrc:''
+        imgSrc: ''
       }
     },
-    props:{
-      formShow:{
-        type:Boolean
+    props: {
+      formShow: {
+        type: Boolean
       }
     },
-    methods:{
-      handleClose(){
+    methods: {
+      handleClose() {
         this.formData = {
-          oldPassword:"",
-          password:"",
-          confirmPassword:"",
-          captchaId:"",
-          captchaCode:"",
+          oldPassword: "",
+          password: "",
+          confirmPassword: "",
+          captchaId: "",
+          captchaCode: "",
         };
         this.$emit("handleFormClose", "passwordChange");
       },
-      handleConfirm(formName){
-        this.$refs[formName].validate((valid) => {
+      handleConfirm(formName) {
+        this.$refs[formName].validate(async (valid) => {
           if (valid) {
-            var user = JSON.parse(sessionStorage.getItem('user'));
-            this.formData.userId = user.id;
-            var loading = this.$loading({
+            let formData = JSON.parse(JSON.stringify(this.formData));
+            delete formData.confirmPassword
+            let loading = this.$loading({
               lock: true,
               text: '正在提交，请稍候',
               spinner: 'el-icon-loading',
               background: 'rgba(0, 0, 0, 0.7)'
             });
-            var self = this;
-            this.$axios.post(process.env.API_BASE + 'user/changePassword',
-              self.formData)
-              .then(function (response) {
-                if(response.data.success){
-                  self.$message.success("修改密码成功");
-                  self.handleClose();
-                  loading.close();
-                }
-                else{
-                  self.$message.error(response.data.message);
-                  loading.close();
+            await this.$axios.post(process.env.API_BASE + 'user/changePassword', formData)
+              .then((response) => {
+                if (response.status == '200') {
+                  this.$message.success("修改密码成功");
+                  this.handleClose();
+                } else {
+                  this.$message.error(response.data.message);
                 }
               })
               .catch(function (error) {
-                self.$message.error(error);
-                loading.close();
+                this.$message.error(error);
               });
+            loading.close();
           } else {
             return false;
           }
         });
       },
       async getCode() {
-        await this.$axios.get(process.env.API_BASE + 'common/getCaptcha?date='+Date.now())
+        await this.$axios.get(process.env.API_BASE + 'common/getCaptcha?date=' + Date.now())
           .then((response) => {
-            if (response.status=='200') {
+            if (response.status == '200') {
               this.imgSrc = response.data.base64Code;
               this.formData.captchaId = response.data.key;
             } else {
@@ -145,7 +140,7 @@
             }
           })
           .catch((error) => {
-            // console.log(error);
+
           });
       }
     },
@@ -155,11 +150,12 @@
   }
 </script>
 <style scoped>
-  .captchaCode{
+  .captchaCode {
     display: flex;
     align-items: center;
   }
-  .captchaCode img{
+
+  .captchaCode img {
     width: 150px;
     margin-left: 15px;
     cursor: pointer;

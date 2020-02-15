@@ -21,11 +21,11 @@ axios.interceptors.response.use(function (response) {
     switch (error.response.status) {
       case 401:
         // 返回 401 清除token信息并跳转到登录页面
-        localStorage.removeItem('token')
-        router.replace({
-          path: '/login',
-          query: {redirect: router.currentRoute.fullPath}
-        })
+        // localStorage.removeItem('token')
+        // router.replace({
+        //   path: '/login',
+        //   query: {redirect: router.currentRoute.fullPath}
+        // })
     }
   }
    Message.error(error.response.data);

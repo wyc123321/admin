@@ -16,8 +16,8 @@
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="ruleForm.email"></el-input>
         </el-form-item>
-        <el-form-item label="手机号码" prop="phone">
-          <el-input v-model="ruleForm.phone"></el-input>
+        <el-form-item label="手机号码" prop="phoneNumber">
+          <el-input v-model="ruleForm.phoneNumber"></el-input>
         </el-form-item>
         <el-form-item label="角色" prop="role">
           <el-select v-model="ruleForm.role" placeholder="请选择角色">
@@ -65,7 +65,7 @@
         ruleForm: {
           name: '',
           email: '',
-          phone: '',
+          phoneNumber: '',
           role: '',
         },
         rules: {
@@ -76,7 +76,7 @@
           role: [
             {required: true, message: '请选择角色', trigger: 'change'}
           ],
-          phone: [
+          phoneNumber: [
             {required: true, message: '请输入手机号码', trigger: 'change'},
             {validator: validatemobilephoneNumber}
           ],

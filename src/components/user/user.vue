@@ -51,6 +51,7 @@
             <el-dropdown-menu slot="dropdown" class="header-el-dropdown-menu">
               <el-dropdown-item :command="[scope.row,'edit']">编辑</el-dropdown-item>
               <el-dropdown-item :command="[scope.row,'delete']">删除</el-dropdown-item>
+              <el-dropdown-item :command="[scope.row,'forbidden']">禁用账号</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -200,6 +201,34 @@
 
           });
         }
+        if (command[1] == "forbidden") {
+          this.$confirm('确定禁用吗?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            closeOnClickModal: false,
+            type: 'warning'
+          }).then(async () => {
+            await this.forbidden(command[0])
+          }).catch(() => {
+
+          });
+        }
+      },
+      async forbidden(row) {
+        await this.$axios.post(process.env.API_BASE + 'user/forbidden', {
+          userId: row.id
+        })
+          .then((response) => {
+            if (response.status == '200') {
+              this.$message.success("禁用成功");
+            } else {
+              this.$message.error(response.data.message);
+            }
+          })
+          .catch(function (error) {
+            this.$message.error(error);
+          });
+        await this.getListData();
       },
       init() {
         let user = JSON.parse(localStorage.getItem('user'));
