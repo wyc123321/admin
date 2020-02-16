@@ -93,14 +93,14 @@
         formData: {},
         email: '',
         count: 0,
-        roleList:[
+        roleList: [
           {
-            label:'管理员',
-            value:0
+            label: '管理员',
+            value: 0
           },
           {
-            label:'业务员',
-            value:1
+            label: '业务员',
+            value: 1
           },
         ]
       }
@@ -136,8 +136,8 @@
         await this.getListData();
         loading.close();
       },
-      async search(){
-        if(!this.email.trim()){
+      async search() {
+        if (!this.email.trim()) {
           this.$message.error('请输入搜索内容');
           return;
         }
@@ -151,8 +151,8 @@
           "pageNum": this.page
         };
         let formData = JSON.parse(JSON.stringify(form));
-        for(var key in formData){
-          if(!formData[key]){
+        for (var key in formData) {
+          if (!formData[key]) {
             delete formData[key]
           }
         }
@@ -215,11 +215,11 @@
           });
         await this.getListData();
       },
-      formatter(row, column, cellValue, index){
-       let result =  this.roleList.find((item)=>{
+      formatter(row, column, cellValue, index) {
+        let result = this.roleList.find((item) => {
           return item.value == cellValue
-        })
-        if(result){
+        });
+        if (result) {
           return result.label;
         }
       }
