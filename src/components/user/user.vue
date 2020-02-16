@@ -3,8 +3,8 @@
     <div class="search">
       <div>
         <span>邮箱：</span>
-        <el-input v-model.trim="userInput" placeholder="请输入内容" size="mini"></el-input>
-        <el-button type="primary" icon="el-icon-search" size="mini">搜索</el-button>
+        <el-input v-model.trim="email" placeholder="请输入内容" size="mini"></el-input>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="search">搜索</el-button>
       </div>
       <div>
         <el-button type="primary" icon="el-icon-plus" size="mini" @click="addUser">新增</el-button>
@@ -125,15 +125,30 @@
         await this.getListData();
         loading.close();
       },
+      async search(){
+        if(!this.email.trim()){
+          this.$message.error('请输入搜索内容');
+          return;
+        }
+        this.page = 1;
+        await this.getListData()
+      },
       async getListData() {
-        let formData = {
+        this.email = this.email.trim();
+        let form = {
           "email": this.email,
           "pageNum": this.page
+        };
+        let formData = JSON.parse(JSON.stringify(form));
+        for(var key in formData){
+          if(!formData[key]){
+            delete formData[key]
+          }
         }
         await this.$axios.post(process.env.API_BASE + 'user/list', formData).then(response => {
           if (response.status == '200') {
             this.tableData = response.data.recordList
-            this.count = response.data.pageCount
+            this.count = response.data.recordCount
           } else {
             this.$message.error(response.data);
           }
@@ -188,12 +203,6 @@
             this.$message.error(error);
           });
         await this.getListData();
-      },
-      init() {
-        let user = JSON.parse(localStorage.getItem('user'));
-        if (user) {
-          this.email = user.email
-        }
       }
     },
     async created() {
@@ -203,7 +212,6 @@
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       });
-      this.init();
       await this.getListData();
       loading.close();
     }
