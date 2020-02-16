@@ -2,7 +2,7 @@
   <div class="navigate">
     <header>
       <div class="navLeft">
-        <h1><img src="../../../static/img/logoFFF.png" alt=""></h1>
+        <h1 @click="goTo"><img src="../../../static/img/logoFFF.png" alt=""></h1>
         <ul class="Nav">
           <li>
             <router-link to="/navigate/report">数据报表</router-link>
@@ -92,6 +92,9 @@
         if (user) {
           this.email = user.email
         }
+      },
+      goTo(){
+        this.$router.replace('/navigate/report')
       }
 
     },
