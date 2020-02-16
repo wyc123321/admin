@@ -34,7 +34,7 @@
   import password from './password'
 
   export default {
-    computed: {},
+    name:'navigate',
     data() {
       return {
         email: '',

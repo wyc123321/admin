@@ -80,7 +80,6 @@
 
 <script>
   import addressDialog from './addAddressDialog'
-
   export default {
     name: "addressComponent",
     data() {
