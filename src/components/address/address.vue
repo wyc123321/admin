@@ -3,10 +3,24 @@
     <div class="search">
       <div>
         <span>省：</span>
-        <el-input v-model.trim="userInput" placeholder="请输入省" size="mini"></el-input>
+        <el-select v-model="ruleForm.province" @change="change" size="mini" filterable placeholder="请选择省份">
+          <el-option
+            v-for="item in provinceList"
+            :key="item.regionCode"
+            :label="item.regionName"
+            :value="item.regionCode">
+          </el-option>
+        </el-select>
         <span class="span2">市：</span>
-        <el-input v-model.trim="userInput" placeholder="请输入市" size="mini"></el-input>
-        <el-button type="primary" icon="el-icon-search" size="mini">搜索</el-button>
+        <el-select v-model="ruleForm.city" size="mini" filterable placeholder="请选择城市">
+          <el-option
+            v-for="item in cityList"
+            :key="item.regionCode"
+            :label="item.regionName"
+            :value="item.regionCode">
+          </el-option>
+        </el-select>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="search">搜索</el-button>
       </div>
       <div>
         <el-button type="primary" icon="el-icon-plus" size="mini" @click="add">新增</el-button>
@@ -72,7 +86,6 @@
       <v-addressDialog :formShow="addressDialogShow" v-if="addressDialogShow"
                        @handleFormConfirm="handleFormConfirm"
                        @handleFormClose="handleFormClose"
-                       :formData="formData" :regionList="regionList"
                        :formTitle="formTitle"></v-addressDialog>
     </div>
   </div>
@@ -80,6 +93,7 @@
 
 <script>
   import addressDialog from './addAddressDialog'
+
   export default {
     name: "addressComponent",
     data() {
@@ -91,7 +105,13 @@
         formTitle: '新增地址',
         formData: {},
         count: 0,
-        regionList: []
+        provinceList: [],
+        cityList: [],
+        regionCode: '',
+        ruleForm: {
+          province: '',
+          city: ''
+        }
       }
     },
     components: {
@@ -106,6 +126,9 @@
       async handleFormConfirm(code, data) {
         if (code == "addAddressDialog") {
           this.addressDialogShow = false;
+          this.page = 1;
+          this.regionCode='';
+          await this.getListData();
         }
       },
       add() {
@@ -123,15 +146,41 @@
         await this.getListData();
         loading.close();
       },
+      async search(){
+        if(!this.ruleForm.province){
+          this.$message.error('请选择省份');
+          return;
+        }
+        this.regionCode=this.ruleForm.province
+        if(this.ruleForm.city){
+          this.regionCode=this.ruleForm.city
+        }
+        const loading = this.$loading({
+          lock: true,
+          text: '加载中',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+        this.page = 1;
+        await this.getListData();
+        loading.close();
+      },
       async getListData() {
-        let formData = {
-          "regionCode": '110000',
+        this.regionCode = this.regionCode.trim();
+        let form = {
+          "regionCode": this.regionCode,
           "pageNum": this.page
+        };
+        let formData = JSON.parse(JSON.stringify(form));
+        for (var key in formData) {
+          if (!formData[key]) {
+            delete formData[key]
+          }
         }
         await this.$axios.post(process.env.API_BASE + 'address/list', formData).then(response => {
           if (response.status == '200') {
-            // this.tableData = response.data.recordList
-            this.count = response.data.pageCount
+            this.tableData = response.data.recordList;
+            this.count = response.data.recordCount;
           } else {
             this.$message.error(response.data);
           }
@@ -187,11 +236,29 @@
           });
         await this.getListData();
       },
+      async change() {
+        this.ruleForm.city = '';
+        await this.$axios.get(process.env.API_BASE + 'common/queryRegion', {
+          params: {
+            'parentCode': this.ruleForm.province
+          }
+        })
+          .then((response) => {
+            if (response.status == '200') {
+              this.cityList = response.data;
+            } else {
+              this.$message.error(response.data.msg);
+            }
+          })
+          .catch(function (error) {
+            this.$message.error(error);
+          });
+      },
       async queryRegion() {
         await this.$axios.get(process.env.API_BASE + 'common/queryRegion')
           .then((response) => {
             if (response.status == '200') {
-              this.regionList = response.data;
+              this.provinceList = response.data;
             } else {
               this.$message.error(response.data.msg);
             }
