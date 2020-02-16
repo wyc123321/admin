@@ -49,73 +49,73 @@
         width="55">
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="deliveryCode"
         header-align="center"
         align="center"
         label="提煤单号">
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="carNumber"
         header-align="center"
         align="center"
         label="车号">
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="deliverDate"
         header-align="center"
         align="center"
         label="发货日期">
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="arrivalDate"
         header-align="center"
         align="center"
         label="收货日期">
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="deliverTon"
         header-align="center"
         align="center"
         label="发货吨数">
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="arrivalTon"
         header-align="center"
         align="center"
         label="收货吨数">
       </el-table-column>
+      <!--<el-table-column-->
+        <!--prop="name"-->
+        <!--header-align="center"-->
+        <!--align="center"-->
+        <!--label="亏吨">-->
+      <!--</el-table-column>-->
       <el-table-column
-        prop="name"
+        prop="lossFee"
         header-align="center"
         align="center"
-        label="亏吨">
+        label="亏吨扣费">
       </el-table-column>
       <el-table-column
-        prop="name"
-        header-align="center"
-        align="center"
-        label="扣费">
-      </el-table-column>
-      <el-table-column
-        prop="name"
+        prop="oilFee"
         header-align="center"
         align="center"
         label="运价">
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="informationFee"
         header-align="center"
         align="center"
         label="信息费">
       </el-table-column>
+      <!--<el-table-column-->
+        <!--prop="name"-->
+        <!--header-align="center"-->
+        <!--align="center"-->
+        <!--label="油票">-->
+      <!--</el-table-column>-->
       <el-table-column
-        prop="name"
-        header-align="center"
-        align="center"
-        label="油票">
-      </el-table-column>
-      <el-table-column
-        prop="name"
+        prop="extraTonFee"
         header-align="center"
         align="center"
         label="超吨费">
@@ -131,15 +131,6 @@
         <p>暂无数据</p>
       </div>
     </el-table>
-    <div class="pagination">
-      <el-pagination
-        @current-change="handlePageChange"
-        :current-page.sync="page"
-        :page-size="10"
-        layout="prev, pager, next, jumper"
-        :total="count" class="page">
-      </el-pagination>
-    </div>
   </div>
 </template>
 
@@ -190,32 +181,31 @@
       }
     },
     methods: {
-      // 每页多少条
-      async handleSizeChange(val) {
-        const loading = this.$loading({
-          lock: true,
-          text: '加载中',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
-        this.page = 1;
-        await this.getListData();
-        loading.close();
-      },
-      //翻页触发的方法
-      async handlePageChange(val) {
-        const loading = this.$loading({
-          lock: true,
-          text: '加载中',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
-        this.page = val;
-        await this.getListData();
-        loading.close();
-      },
       async getListData() {
+        // let form = {
+        //   "email": this.email,
+        //   "pageNum": this.page
+        // };
+        // let formData = JSON.parse(JSON.stringify(form));
+        // for (var key in formData) {
+        //   if (!formData[key]) {
+        //     delete formData[key]
+        //   }
+        // }
+        await this.$axios.post(process.env.API_BASE + 'wayBill/list',
+        {
+          "arrivalDate": "2020-02-02",
+          "endAddressId": 0,
+          "startAddressId": 0
+        }).then(response => {
+          if (response.status == '200') {
+            this.tableData = response.data.wayBillList;
+          } else {
+            this.$message.error(response.data);
+          }
+        }).catch((error) => {
 
+        })
       },
       handleCommand(command) {
         if (command == "password") {
