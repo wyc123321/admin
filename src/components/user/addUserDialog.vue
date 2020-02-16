@@ -6,7 +6,7 @@
     :before-close="cancle"
     :close-on-click-modal="false"
     :close-on-press-escape="false" append-to-body
-    width="600px"
+    width="500px"
     top="8vh" class="addIncomeDialog">
     <div>
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" size="mini">
@@ -20,8 +20,9 @@
           <el-input v-model="ruleForm.phoneNumber"></el-input>
         </el-form-item>
         <el-form-item label="角色" prop="roleType">
-          <el-select v-model="ruleForm.roleType" placeholder="请选择角色">
+          <el-select style="width: 360px;" v-model="ruleForm.roleType" placeholder="请选择角色">
             <el-option label="管理员" value="0"></el-option>
+            <el-option label="业务员" value="1"></el-option>
           </el-select>
         </el-form-item>
       </el-form>

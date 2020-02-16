@@ -39,6 +39,7 @@
         prop="roleType"
         header-align="center"
         align="center"
+        :formatter="formatter"
         label="角色">
       </el-table-column>
       <el-table-column label="操作" width="150" align="center"
@@ -91,7 +92,17 @@
         formTitle: '新增角色',
         formData: {},
         email: '',
-        count: 0
+        count: 0,
+        roleList:[
+          {
+            label:'管理员',
+            value:0
+          },
+          {
+            label:'业务员',
+            value:1
+          },
+        ]
       }
     },
     components: {
@@ -203,6 +214,14 @@
             this.$message.error(error);
           });
         await this.getListData();
+      },
+      formatter(row, column, cellValue, index){
+       let result =  this.roleList.find((item)=>{
+          return item.value == cellValue
+        })
+        if(result){
+          return result.label;
+        }
       }
     },
     async created() {
