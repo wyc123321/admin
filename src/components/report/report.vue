@@ -44,6 +44,9 @@
       size="mini"
       :data="tableData"
       stripe
+      ref="table"
+      :summary-method="getSummaries"
+      show-summary
       height="calc(100% - 30px)"
       style="width: 100%">
       <el-table-column
@@ -211,8 +214,50 @@
         loading.close();
       },
       formatter(row, column, cellValue, index) {
-        return  moment(cellValue).format('YYYY-MM-DD')
-      }
+        return  moment(cellValue).format('YYYY-MM-DD');
+      },
+      getSummaries(param) {
+        this.$nextTick(() => {
+          this.$refs.table.doLayout();
+        });
+        const {columns, data} = param;
+        const sums = [];
+        columns.forEach((column, index) => {
+          if (index === 0) {
+            sums[index] = '合计';
+            return;
+          }
+          let xx = JSON.stringify(data);
+          xx = JSON.parse(xx);
+          const values = xx.map(item => {
+            if (index == 1 || index == 2 || index == 3 || index == 4) {
+              return NaN
+            }else {
+              return Number(item[column.property]);
+            }
+          });
+          if (!values.every(value => isNaN(value))) {
+            sums[index] = values.reduce((prev, curr) => {
+              const value = Number(curr);
+              if (!isNaN(value)) {
+                return prev + curr;
+              } else {
+                return prev;
+              }
+            }, 0);
+            sums[index] = Number(sums[index]).toFixed(2);
+            let sum1 = sums[index].split('.')[0];
+            let sum2 = sums[index].split('.')[1];
+            sum1 = sum1.replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
+            sums[index] = sum1 + '.' + sum2;
+            // sums[index] += ' 元';
+          } else {
+            sums[index] = '';
+          }
+        });
+
+        return sums;
+      },
     },
     async created() {
       const loading = this.$loading({
