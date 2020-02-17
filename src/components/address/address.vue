@@ -3,7 +3,8 @@
     <div class="search">
       <div>
         <span>省：</span>
-        <el-select v-model="ruleForm.province" @change="change" size="mini" filterable placeholder="请选择省份">
+        <el-select v-model="ruleForm.province" :clearable="true" @change="change" size="mini" filterable
+                   placeholder="请选择省份">
           <el-option
             v-for="item in provinceList"
             :key="item.regionCode"
@@ -238,21 +239,24 @@
       },
       async change() {
         this.ruleForm.city = '';
-        await this.$axios.get(process.env.API_BASE + 'common/queryRegion', {
-          params: {
-            'parentCode': this.ruleForm.province
-          }
-        })
-          .then((response) => {
-            if (response.status == '200') {
-              this.cityList = response.data;
-            } else {
-              this.$message.error(response.data.msg);
+        this.cityList = [];
+        if (this.ruleForm.province) {
+          await this.$axios.get(process.env.API_BASE + 'common/queryRegion', {
+            params: {
+              'parentCode': this.ruleForm.province
             }
           })
-          .catch(function (error) {
-            this.$message.error(error);
-          });
+            .then((response) => {
+              if (response.status == '200') {
+                this.cityList = response.data;
+              } else {
+                this.$message.error(response.data.msg);
+              }
+            })
+            .catch(function (error) {
+              this.$message.error(error);
+            });
+        }
       },
       async queryRegion() {
         await this.$axios.get(process.env.API_BASE + 'common/queryRegion')
