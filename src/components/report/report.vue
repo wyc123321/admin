@@ -14,7 +14,7 @@
           placeholder="请选择日期">
         </el-date-picker>
         <span class="span2">发货地：</span>
-        <el-select v-model="formData.startAddressId" filterable placeholder="请选择" size="mini">
+        <el-select v-model="formData.startAddressId" :clearable="true" @change="search" filterable placeholder="请选择" size="mini">
           <el-option
             v-for="item in addressList"
             :key="item.id"
@@ -23,7 +23,7 @@
           </el-option>
         </el-select>
         <span class="span2">收货地：</span>
-        <el-select v-model="formData.endAddressId" filterable placeholder="请选择" size="mini">
+        <el-select v-model="formData.endAddressId" :clearable="true" @change="search" filterable placeholder="请选择" size="mini">
           <el-option
             v-for="item in addressList"
             :key="item.id"
@@ -31,7 +31,7 @@
             :value="item.id">
           </el-option>
         </el-select>
-        <el-button type="primary" icon="el-icon-search" size="mini">搜索</el-button>
+        <el-button type="primary" icon="el-icon-search" @click="search" size="mini">搜索</el-button>
       </div>
       <div>
         <el-button type="primary" icon="el-icon-download" size="mini">下载</el-button>
@@ -41,7 +41,7 @@
       size="mini"
       :data="tableData"
       stripe
-      height="calc(100% - 70px)"
+      height="calc(100% - 30px)"
       style="width: 100%">
       <el-table-column
         label="序号"
@@ -154,22 +154,18 @@
     },
     methods: {
       async getListData() {
-        // let form = {
-        //   "email": this.email,
-        //   "pageNum": this.page
-        // };
-        // let formData = JSON.parse(JSON.stringify(form));
-        // for (var key in formData) {
-        //   if (!formData[key]) {
-        //     delete formData[key]
-        //   }
-        // }
-        await this.$axios.post(process.env.API_BASE + 'wayBill/list',
-          {
-            "arrivalDate": "2020-02-02",
-            "endAddressId": 0,
-            "startAddressId": 0
-          }).then(response => {
+        let form = {
+          "arrivalDate": this.formData.arrivalDate,
+          "endAddressId": this.formData.endAddressId,
+          "startAddressId": this.formData.startAddressId
+        };
+        let formData = JSON.parse(JSON.stringify(form));
+        for (var key in formData) {
+          if (!formData[key]) {
+            delete formData[key]
+          }
+        }
+        await this.$axios.post(process.env.API_BASE + 'wayBill/list',formData).then(response => {
           if (response.status == '200') {
             this.tableData = response.data.wayBillList;
           } else {
@@ -195,6 +191,9 @@
 
         })
       },
+     async search(){
+        await this.getListData()
+      }
     },
     async created() {
       const loading = this.$loading({
