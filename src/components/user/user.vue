@@ -16,13 +16,13 @@
       stripe
       height="calc(100% - 70px)"
       style="width: 100%">
-      <el-table-column
-        prop="name"
-        header-align="center"
-        align="center"
-        label="姓名"
-        width="120">
-      </el-table-column>
+      <!--<el-table-column-->
+        <!--prop="name"-->
+        <!--header-align="center"-->
+        <!--align="center"-->
+        <!--label="姓名"-->
+        <!--width="120">-->
+      <!--</el-table-column>-->
       <el-table-column
         prop="email"
         header-align="center"
