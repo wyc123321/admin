@@ -13,7 +13,8 @@
           </el-option>
         </el-select>
         <span class="span2">市：</span>
-        <el-select v-model="ruleForm.city" size="mini" :clearable="true" filterable placeholder="请选择城市">
+        <el-select v-model="ruleForm.city" size="mini" @change="search" :clearable="true" filterable
+                   placeholder="请选择城市">
           <el-option
             v-for="item in cityList"
             :key="item.regionCode"
@@ -148,11 +149,7 @@
         loading.close();
       },
       async search() {
-        if (!this.ruleForm.province) {
-          this.$message.error('请选择省份');
-          return;
-        }
-        this.regionCode = this.ruleForm.province
+        this.regionCode = this.ruleForm.province;
         if (this.ruleForm.city) {
           this.regionCode = this.ruleForm.city
         }
@@ -222,7 +219,7 @@
         }
       },
       async forbidden(row) {
-        await this.$axios.post(process.env.API_BASE + 'address/forbidden?addressId='+row.id)
+        await this.$axios.post(process.env.API_BASE + 'address/forbidden?addressId=' + row.id)
           .then((response) => {
             if (response.status == '200') {
               this.$message.success("禁用成功");
@@ -255,6 +252,7 @@
               this.$message.error(error);
             });
         }
+        await this.search();
       },
       async queryRegion() {
         await this.$axios.get(process.env.API_BASE + 'common/queryRegion')
