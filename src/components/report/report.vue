@@ -7,8 +7,9 @@
           size="mini"
           v-model="formData.arrivalDate"
           type="date"
+          @change="changeDate"
           format="yyyy年 MM月 dd日"
-          value-format="yyyyMMdd"
+          value-format="yyyy-MM-dd"
           :clearable="false"
           :editable="false"
           placeholder="请选择日期">
@@ -194,6 +195,10 @@
         })
       },
       async search() {
+        await this.getListData()
+      },
+      async changeDate() {
+        this.page = 1;
         await this.getListData()
       }
     },
