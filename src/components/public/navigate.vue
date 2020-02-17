@@ -165,7 +165,7 @@
   }
 
   .dropdown {
-    color: rgba(255, 255, 255, 1);
-    font-size: 18px;
+    color: rgba(255, 255, 255, 1) !important;
+    font-size: 18px !important;
   }
 </style>
