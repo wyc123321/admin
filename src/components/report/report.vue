@@ -5,7 +5,7 @@
         <span>收货日期：</span>
         <el-date-picker
           size="mini"
-          v-model="formData.entryDate"
+          v-model="formData.arrivalDate"
           type="date"
           format="yyyy年 MM月 dd日"
           value-format="yyyyMMdd"
@@ -14,21 +14,21 @@
           placeholder="请选择日期">
         </el-date-picker>
         <span class="span2">发货地：</span>
-        <el-select v-model="formData.entryDate" placeholder="请选择" size="mini">
+        <el-select v-model="formData.startAddressId" filterable placeholder="请选择" size="mini">
           <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
+            v-for="item in addressList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
           </el-option>
         </el-select>
         <span class="span2">收货地：</span>
-        <el-select v-model="formData.entryDate" placeholder="请选择" size="mini">
+        <el-select v-model="formData.endAddressId" filterable placeholder="请选择" size="mini">
           <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
+            v-for="item in addressList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
           </el-option>
         </el-select>
         <el-button type="primary" icon="el-icon-search" size="mini">搜索</el-button>
@@ -85,10 +85,10 @@
         label="收货吨数">
       </el-table-column>
       <!--<el-table-column-->
-        <!--prop="name"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="亏吨">-->
+      <!--prop="name"-->
+      <!--header-align="center"-->
+      <!--align="center"-->
+      <!--label="亏吨">-->
       <!--</el-table-column>-->
       <el-table-column
         prop="lossFee"
@@ -109,10 +109,10 @@
         label="信息费">
       </el-table-column>
       <!--<el-table-column-->
-        <!--prop="name"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="油票">-->
+      <!--prop="name"-->
+      <!--header-align="center"-->
+      <!--align="center"-->
+      <!--label="油票">-->
       <!--</el-table-column>-->
       <el-table-column
         prop="extraTonFee"
@@ -135,13 +135,16 @@
 </template>
 
 <script>
+  import moment from 'moment'
   export default {
     name: "report",
     data() {
       return {
         userInput: '',
         formData: {
-          entryDate: ''
+          arrivalDate: '',
+          endAddressId: "",
+          startAddressId: ""
         },
         tableData: [{
           date: '2016-05-02',
@@ -177,7 +180,7 @@
           value: '选项5',
           label: '北京烤鸭'
         }],
-        count: 200
+        addressList:[]
       }
     },
     methods: {
@@ -193,11 +196,11 @@
         //   }
         // }
         await this.$axios.post(process.env.API_BASE + 'wayBill/list',
-        {
-          "arrivalDate": "2020-02-02",
-          "endAddressId": 0,
-          "startAddressId": 0
-        }).then(response => {
+          {
+            "arrivalDate": "2020-02-02",
+            "endAddressId": 0,
+            "startAddressId": 0
+          }).then(response => {
           if (response.status == '200') {
             this.tableData = response.data.wayBillList;
           } else {
@@ -212,6 +215,26 @@
           this.passwordChangeShow = true;
         }
       },
+      async getAddressList() {
+        let form = {
+          "pageNum": 1
+        };
+        let formData = JSON.parse(JSON.stringify(form));
+        for (var key in formData) {
+          if (!formData[key]) {
+            delete formData[key]
+          }
+        }
+        await this.$axios.post(process.env.API_BASE + 'address/list', formData).then(response => {
+          if (response.status == '200') {
+            this.addressList = response.data.recordList;
+          } else {
+            this.$message.error(response.data);
+          }
+        }).catch((error) => {
+
+        })
+      },
     },
     async created() {
       const loading = this.$loading({
@@ -220,6 +243,8 @@
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       });
+      this.formData.arrivalDate = moment().format('YYYY-MM-DD')
+      await this.getAddressList();
       await this.getListData();
       loading.close();
     }
