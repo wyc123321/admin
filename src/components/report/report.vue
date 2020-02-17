@@ -243,7 +243,7 @@
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       });
-      this.formData.arrivalDate = moment().format('YYYY-MM-DD')
+      // this.formData.arrivalDate = moment().format('YYYY-MM-DD');
       await this.getAddressList();
       await this.getListData();
       loading.close();
