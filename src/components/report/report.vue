@@ -67,12 +67,14 @@
         prop="deliverDate"
         header-align="center"
         align="center"
+        :formatter="formatter"
         label="发货日期">
       </el-table-column>
       <el-table-column
         prop="arrivalDate"
         header-align="center"
         align="center"
+        :formatter="formatter"
         label="收货日期">
       </el-table-column>
       <el-table-column
@@ -207,6 +209,9 @@
         this.page = 1;
         await this.getListData();
         loading.close();
+      },
+      formatter(row, column, cellValue, index) {
+        return  moment(cellValue).format('YYYY-MM-DD')
       }
     },
     async created() {
