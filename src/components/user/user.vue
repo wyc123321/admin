@@ -50,7 +50,7 @@
         <img src="../../../static/img/more.png" alt="">
       </span>
             <el-dropdown-menu slot="dropdown" class="header-el-dropdown-menu">
-              <el-dropdown-item :command="[scope.row,'edit']">编辑</el-dropdown-item>
+              <!--<el-dropdown-item :command="[scope.row,'edit']">编辑</el-dropdown-item>-->
               <el-dropdown-item :command="[scope.row,'forbidden']">禁用账号</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
