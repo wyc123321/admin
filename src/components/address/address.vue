@@ -12,7 +12,7 @@
           </el-option>
         </el-select>
         <span class="span2">市：</span>
-        <el-select v-model="ruleForm.city" size="mini" filterable placeholder="请选择城市">
+        <el-select v-model="ruleForm.city" size="mini" :clearable="true" filterable placeholder="请选择城市">
           <el-option
             v-for="item in cityList"
             :key="item.regionCode"
@@ -127,7 +127,7 @@
         if (code == "addAddressDialog") {
           this.addressDialogShow = false;
           this.page = 1;
-          this.regionCode='';
+          this.regionCode = '';
           await this.getListData();
         }
       },
@@ -146,14 +146,14 @@
         await this.getListData();
         loading.close();
       },
-      async search(){
-        if(!this.ruleForm.province){
+      async search() {
+        if (!this.ruleForm.province) {
           this.$message.error('请选择省份');
           return;
         }
-        this.regionCode=this.ruleForm.province
-        if(this.ruleForm.city){
-          this.regionCode=this.ruleForm.city
+        this.regionCode = this.ruleForm.province
+        if (this.ruleForm.city) {
+          this.regionCode = this.ruleForm.city
         }
         const loading = this.$loading({
           lock: true,

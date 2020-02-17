@@ -14,7 +14,8 @@
           placeholder="请选择日期">
         </el-date-picker>
         <span class="span2">发货地：</span>
-        <el-select v-model="formData.startAddressId" :clearable="true" @change="search" filterable placeholder="请选择" size="mini">
+        <el-select v-model="formData.startAddressId" :clearable="true" @change="search" filterable placeholder="请选择"
+                   size="mini">
           <el-option
             v-for="item in addressList"
             :key="item.id"
@@ -23,7 +24,8 @@
           </el-option>
         </el-select>
         <span class="span2">收货地：</span>
-        <el-select v-model="formData.endAddressId" :clearable="true" @change="search" filterable placeholder="请选择" size="mini">
+        <el-select v-model="formData.endAddressId" :clearable="true" @change="search" filterable placeholder="请选择"
+                   size="mini">
           <el-option
             v-for="item in addressList"
             :key="item.id"
@@ -165,7 +167,7 @@
             delete formData[key]
           }
         }
-        await this.$axios.post(process.env.API_BASE + 'wayBill/list',formData).then(response => {
+        await this.$axios.post(process.env.API_BASE + 'wayBill/list', formData).then(response => {
           if (response.status == '200') {
             this.tableData = response.data.wayBillList;
           } else {
@@ -191,7 +193,7 @@
 
         })
       },
-     async search(){
+      async search() {
         await this.getListData()
       }
     },
