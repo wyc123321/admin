@@ -116,12 +116,12 @@
         align="center"
         label="信息费">
       </el-table-column>
-      <!--<el-table-column-->
-      <!--prop="name"-->
-      <!--header-align="center"-->
-      <!--align="center"-->
-      <!--label="油票">-->
-      <!--</el-table-column>-->
+      <el-table-column
+      prop="oilFee"
+      header-align="center"
+      align="center"
+      label="油票">
+      </el-table-column>
       <el-table-column
         prop="extraTonFee"
         header-align="center"
