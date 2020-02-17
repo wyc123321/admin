@@ -222,9 +222,7 @@
         }
       },
       async forbidden(row) {
-        await this.$axios.post(process.env.API_BASE + 'address/forbidden', {
-          addressId: row.id
-        })
+        await this.$axios.post(process.env.API_BASE + 'address/forbidden?addressId='+row.id)
           .then((response) => {
             if (response.status == '200') {
               this.$message.success("禁用成功");
