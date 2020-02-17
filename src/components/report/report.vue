@@ -184,19 +184,10 @@
           this.passwordChangeShow = true;
         }
       },
-      async getAddressList() {
-        let form = {
-          "pageNum": 1
-        };
-        let formData = JSON.parse(JSON.stringify(form));
-        for (var key in formData) {
-          if (!formData[key]) {
-            delete formData[key]
-          }
-        }
-        await this.$axios.post(process.env.API_BASE + 'address/list', formData).then(response => {
+      async getAllAddressList() {
+        await this.$axios.post(process.env.API_BASE + '/address/getALlList').then(response => {
           if (response.status == '200') {
-            this.addressList = response.data.recordList;
+            this.addressList = response.data;
           } else {
             this.$message.error(response.data);
           }
@@ -213,8 +204,8 @@
         background: 'rgba(0, 0, 0, 0.7)'
       });
       this.formData.arrivalDate = moment().format('YYYY-MM-DD');
-      await this.getAddressList();
       await this.getListData();
+      await this.getAllAddressList();
       loading.close();
     }
   }
