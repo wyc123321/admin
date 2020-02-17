@@ -92,12 +92,12 @@
         align="center"
         label="收货吨数">
       </el-table-column>
-      <!--<el-table-column-->
-      <!--prop="name"-->
-      <!--header-align="center"-->
-      <!--align="center"-->
-      <!--label="亏吨">-->
-      <!--</el-table-column>-->
+      <el-table-column
+      prop="lossTon"
+      header-align="center"
+      align="center"
+      label="亏吨">
+      </el-table-column>
       <el-table-column
         prop="lossFee"
         header-align="center"
@@ -105,7 +105,7 @@
         label="亏吨扣费">
       </el-table-column>
       <el-table-column
-        prop="oilFee"
+        prop="freightUnit"
         header-align="center"
         align="center"
         label="运价">
@@ -129,7 +129,7 @@
         label="超吨费">
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="paymentAmount"
         header-align="center"
         align="center"
         label="实际金额">
