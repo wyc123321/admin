@@ -198,14 +198,21 @@
         await this.getListData()
       },
       async changeDate() {
+        const loading = this.$loading({
+          lock: true,
+          text: '加载中.....',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
         this.page = 1;
-        await this.getListData()
+        await this.getListData();
+        loading.close();
       }
     },
     async created() {
       const loading = this.$loading({
         lock: true,
-        text: '加载.....',
+        text: '加载中.....',
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       });
