@@ -37,7 +37,7 @@
         <el-button type="primary" icon="el-icon-search" @click="search" size="mini">搜索</el-button>
       </div>
       <div>
-        <el-button type="primary" icon="el-icon-download" size="mini">下载</el-button>
+        <el-button type="primary" icon="el-icon-download" size="mini" @click="handleExport">下载</el-button>
       </div>
     </div>
     <el-table
@@ -93,10 +93,10 @@
         label="收货吨数">
       </el-table-column>
       <el-table-column
-      prop="lossTon"
-      header-align="center"
-      align="center"
-      label="亏吨">
+        prop="lossTon"
+        header-align="center"
+        align="center"
+        label="亏吨">
       </el-table-column>
       <el-table-column
         prop="lossFee"
@@ -117,10 +117,10 @@
         label="信息费">
       </el-table-column>
       <el-table-column
-      prop="oilFee"
-      header-align="center"
-      align="center"
-      label="油票">
+        prop="oilFee"
+        header-align="center"
+        align="center"
+        label="油票">
       </el-table-column>
       <el-table-column
         prop="extraTonFee"
@@ -144,6 +144,7 @@
 
 <script>
   import moment from 'moment'
+  import qs from 'qs'
 
   export default {
     name: "report",
@@ -214,7 +215,7 @@
         loading.close();
       },
       formatter(row, column, cellValue, index) {
-        return  moment(cellValue).format('YYYY-MM-DD');
+        return moment(cellValue).format('YYYY-MM-DD');
       },
       getSummaries(param) {
         this.$nextTick(() => {
@@ -232,7 +233,7 @@
           const values = xx.map(item => {
             if (index == 1 || index == 2 || index == 3 || index == 4) {
               return NaN
-            }else {
+            } else {
               return Number(item[column.property]);
             }
           });
@@ -258,6 +259,41 @@
 
         return sums;
       },
+      async handleExport() {
+        let formData = {
+          "arrivalDate": this.formData.arrivalDate,
+          "startAddressId": this.formData.startAddressId,
+          "endAddressId": this.formData.endAddressId,
+        };
+        if(!formData.startAddressId){
+          this.$message.error('请选择发货地');
+          return;
+        }
+        if(!formData.endAddressId){
+          this.$message.error('请选择收货地');
+          return;
+        }
+        await this.$axios.get(process.env.API_BASE + '/wayBill/download?' + qs.stringify(formData), {responseType: 'arraybuffer'}).then(response => {
+          if (response.status == '200') {
+            let fileName = "通茂煤运 - " + this.formData.arrivalDate + " - 数据报表";
+            let blob = new Blob([response.data], {type: "application/vnd.ms-excel"});
+            let filename = fileName;
+            let a = document.createElement('a');
+            a.innerHTML = filename;
+            a.download = fileName + ".xls";
+            a.href = URL.createObjectURL(blob);
+            document.body.appendChild(a);
+            let evt = document.createEvent("MouseEvents");
+            evt.initEvent("click", false, false);
+            a.dispatchEvent(evt);
+            document.body.removeChild(a);
+          } else {
+            this.$message.error(response.data);
+          }
+        }).catch((error) => {
+
+        })
+      }
     },
     async created() {
       const loading = this.$loading({
