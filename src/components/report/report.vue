@@ -265,17 +265,32 @@
           "startAddressId": this.formData.startAddressId,
           "endAddressId": this.formData.endAddressId,
         };
-        if(!formData.startAddressId){
+        if (!formData.startAddressId) {
           this.$message.error('请选择发货地');
           return;
         }
-        if(!formData.endAddressId){
+        if (!formData.endAddressId) {
           this.$message.error('请选择收货地');
           return;
         }
         await this.$axios.get(process.env.API_BASE + '/wayBill/download?' + qs.stringify(formData), {responseType: 'arraybuffer'}).then(response => {
           if (response.status == '200') {
-            let fileName = "通茂煤运 - " + this.formData.arrivalDate + " - 数据报表";
+            let startAddressName = '';
+            let endAddressName = '';
+            let startAddressResult = this.addressList.find((item) => {
+              return formData.startAddressId == item.id
+            });
+            if (startAddressResult) {
+              startAddressName = startAddressResult.name;
+            }
+            let endAddressResult = this.addressList.find((item) => {
+              return formData.endAddressId == item.id
+            });
+            if (endAddressResult) {
+              endAddressName = endAddressResult.name;
+            }
+            let arrivalDate = moment(formData.arrivalDate).format('YYYY年-MM月-DD日');
+            let fileName = "通茂煤运-" + startAddressName + '-' + endAddressName + '-' + arrivalDate + "-数据报表";
             let blob = new Blob([response.data], {type: "application/vnd.ms-excel"});
             let filename = fileName;
             let a = document.createElement('a');
