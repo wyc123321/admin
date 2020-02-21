@@ -58,6 +58,13 @@
         align="center"
         label="地址名称">
       </el-table-column>
+      <el-table-column
+        prop="status"
+        header-align="center"
+        align="center"
+        :formatter="formatter"
+        label="状态">
+      </el-table-column>
       <el-table-column label="操作" width="150" align="center"
                        header-align="center">
         <template slot-scope="scope">
@@ -67,7 +74,8 @@
       </span>
             <el-dropdown-menu slot="dropdown" class="header-el-dropdown-menu">
               <!--<el-dropdown-item :command="[scope.row,'edit']">编辑</el-dropdown-item>-->
-              <el-dropdown-item :command="[scope.row,'forbidden']">禁用账号</el-dropdown-item>
+              <el-dropdown-item v-if="scope.row.status==1" :command="[scope.row,'forbidden']">禁用账号</el-dropdown-item>
+              <el-dropdown-item v-if="scope.row.status==0" :command="[scope.row,'start']">启用账号</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -148,6 +156,15 @@
         await this.getListData();
         loading.close();
       },
+      formatter(row, column, cellValue, index) {
+        if (column.property == "status") {
+          if (cellValue == 1) {
+            return '停用'
+          } else {
+            return '启用'
+          }
+        }
+      },
       async search() {
         this.regionCode = this.ruleForm.province;
         if (this.ruleForm.city) {
@@ -217,6 +234,32 @@
 
           });
         }
+        if (command[1] == "start") {
+          this.$confirm('确定禁用吗?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            closeOnClickModal: false,
+            type: 'warning'
+          }).then(async () => {
+            await this.start(command[0])
+          }).catch(() => {
+
+          });
+        }
+      },
+      async start(row) {
+        await this.$axios.post(process.env.API_BASE + 'address/enable?addressId=' + row.id)
+          .then((response) => {
+            if (response.status == '200') {
+              this.$message.success("启用成功");
+            } else {
+              this.$message.error(response.data.message);
+            }
+          })
+          .catch(function (error) {
+            this.$message.error(error);
+          });
+        await this.getListData();
       },
       async forbidden(row) {
         await this.$axios.post(process.env.API_BASE + 'address/forbidden?addressId=' + row.id)

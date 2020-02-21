@@ -17,11 +17,11 @@
       height="calc(100% - 70px)"
       style="width: 100%">
       <!--<el-table-column-->
-        <!--prop="name"-->
-        <!--header-align="center"-->
-        <!--align="center"-->
-        <!--label="姓名"-->
-        <!--width="120">-->
+      <!--prop="name"-->
+      <!--header-align="center"-->
+      <!--align="center"-->
+      <!--label="姓名"-->
+      <!--width="120">-->
       <!--</el-table-column>-->
       <el-table-column
         prop="email"
@@ -42,6 +42,13 @@
         :formatter="formatter"
         label="角色">
       </el-table-column>
+      <el-table-column
+        prop="status"
+        header-align="center"
+        align="center"
+        :formatter="formatter"
+        label="状态">
+      </el-table-column>
       <el-table-column label="操作" width="150" align="center"
                        header-align="center">
         <template slot-scope="scope">
@@ -51,7 +58,8 @@
       </span>
             <el-dropdown-menu slot="dropdown" class="header-el-dropdown-menu">
               <!--<el-dropdown-item :command="[scope.row,'edit']">编辑</el-dropdown-item>-->
-              <el-dropdown-item :command="[scope.row,'forbidden']">禁用账号</el-dropdown-item>
+              <el-dropdown-item v-if="scope.row.status==1" :command="[scope.row,'forbidden']">禁用账号</el-dropdown-item>
+              <el-dropdown-item v-if="scope.row.status==0" :command="[scope.row,'start']">启用账号</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -198,9 +206,21 @@
 
           });
         }
+        if (command[1] == "start") {
+          this.$confirm('确定启用吗?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            closeOnClickModal: false,
+            type: 'warning'
+          }).then(async () => {
+            await this.start(command[0])
+          }).catch(() => {
+
+          });
+        }
       },
       async forbidden(row) {
-        await this.$axios.post(process.env.API_BASE + 'user/forbidden?userId='+row.id)
+        await this.$axios.post(process.env.API_BASE + 'user/forbidden?userId=' + row.id)
           .then((response) => {
             if (response.status == '200') {
               this.$message.success("禁用成功");
@@ -213,12 +233,35 @@
           });
         await this.getListData();
       },
+      async start(row) {
+        await this.$axios.post(process.env.API_BASE + 'user/enable?userId=' + row.id)
+          .then((response) => {
+            if (response.status == '200') {
+              this.$message.success("启用成功");
+            } else {
+              this.$message.error(response.data.message);
+            }
+          })
+          .catch(function (error) {
+            this.$message.error(error);
+          });
+        await this.getListData();
+      },
       formatter(row, column, cellValue, index) {
-        let result = this.roleList.find((item) => {
-          return item.value == cellValue
-        });
-        if (result) {
-          return result.label;
+        if (column.property == "roleType") {
+          let result = this.roleList.find((item) => {
+            return item.value == cellValue
+          });
+          if (result) {
+            return result.label;
+          }
+        }
+        if (column.property == "status") {
+          if (cellValue == 1) {
+            return '停用'
+          } else {
+            return '启用'
+          }
         }
       }
     },
