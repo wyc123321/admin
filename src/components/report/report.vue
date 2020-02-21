@@ -295,7 +295,7 @@
             let filename = fileName;
             let a = document.createElement('a');
             a.innerHTML = filename;
-            a.download = fileName + ".xls";
+            a.download = fileName + ".xlsx";
             a.href = URL.createObjectURL(blob);
             document.body.appendChild(a);
             let evt = document.createEvent("MouseEvents");
