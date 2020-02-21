@@ -35,19 +35,19 @@
       height="calc(100% - 70px)"
       style="width: 100%">
       <el-table-column
-        prop="name"
+        prop="firestRegionName"
         header-align="center"
         align="center"
         label="省">
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="secondRegionName"
         header-align="center"
         align="center"
         label="市">
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="threeRegionName"
         header-align="center"
         align="center"
         label="区/县">
