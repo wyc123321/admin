@@ -10,9 +10,9 @@
     top="8vh" class="addIncomeDialog">
     <div>
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" size="mini">
-        <!--<el-form-item label="姓名" prop="name">-->
-        <!--<el-input v-model="ruleForm.name"></el-input>-->
-        <!--</el-form-item>-->
+        <el-form-item label="姓名" prop="realName">
+        <el-input v-model="ruleForm.realName"></el-input>
+        </el-form-item>
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="ruleForm.email"></el-input>
         </el-form-item>
@@ -63,15 +63,15 @@
       };
       return {
         ruleForm: {
-          // name: '',
+          realName: '',
           email: '',
           phoneNumber: '',
           roleType: '',
         },
         rules: {
-          name: [
+          realName: [
             {required: true, message: '请输入姓名'},
-            {min: 3, max: 5, message: '长度在 3 到 5 个字符'}
+            {min: 2, max: 10, message: '长度在 2 到 10 个字符'}
           ],
           roleType: [
             {required: true, message: '请选择角色', trigger: 'change'}

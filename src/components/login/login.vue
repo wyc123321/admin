@@ -118,8 +118,9 @@
             })
             .catch(async (error) => {
               if (error.response) {
-                await this.getCode();
+                this.form.captchaCode = '';
                 this.$message.error(error.response.data);
+                await this.getCode();
               } else if (error.request) {
                 console.log(error.request);
               } else {
