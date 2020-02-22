@@ -159,9 +159,9 @@
       formatter(row, column, cellValue, index) {
         if (column.property == "status") {
           if (cellValue == 1) {
-            return '停用'
-          } else {
             return '启用'
+          } else {
+            return '停用'
           }
         }
       },
