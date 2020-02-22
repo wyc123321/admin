@@ -97,7 +97,7 @@
         tableData: [],
         page: 1,
         addUserShow: false,
-        formTitle: '新增角色',
+        formTitle: '新增用户',
         formData: {},
         email: '',
         count: 0,
