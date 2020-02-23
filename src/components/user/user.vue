@@ -17,11 +17,11 @@
       height="calc(100% - 70px)"
       style="width: 100%">
       <el-table-column
-      prop="realName"
-      header-align="center"
-      align="center"
-      label="姓名"
-      width="120">
+        prop="realName"
+        header-align="center"
+        align="center"
+        label="姓名"
+        width="120">
       </el-table-column>
       <el-table-column
         prop="email"
@@ -43,6 +43,12 @@
         label="角色">
       </el-table-column>
       <el-table-column
+        prop="balance"
+        header-align="center"
+        align="center"
+        label="余额">
+      </el-table-column>
+      <el-table-column
         prop="status"
         header-align="center"
         align="center"
@@ -60,6 +66,12 @@
               <!--<el-dropdown-item :command="[scope.row,'edit']">编辑</el-dropdown-item>-->
               <el-dropdown-item v-if="scope.row.status==1" :command="[scope.row,'forbidden']">禁用账号</el-dropdown-item>
               <el-dropdown-item v-if="scope.row.status==0" :command="[scope.row,'start']">启用账号</el-dropdown-item>
+              <el-dropdown-item v-if="scope.row.status==1&&userEmail!=scope.row.email"
+                                :command="[scope.row,'addBalance']">添加余额
+              </el-dropdown-item>
+              <el-dropdown-item v-if="scope.row.status==1&&userEmail==scope.row.email"
+                                :command="[scope.row,'addMoney']">充值
+              </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -82,12 +94,18 @@
                        @handleFormClose="handleFormClose"
                        :formData="formData"
                        :formTitle="formTitle"></v-addUserDialog>
+      <v-addMoneyDialog :formShow="addMoneyShow" v-if="addMoneyShow"
+                        @handleFormConfirm="handleFormConfirm"
+                        @handleFormClose="handleFormClose"
+                        :formData="formData"
+                        :formTitle="formTitle"></v-addMoneyDialog>
     </div>
   </div>
 </template>
 
 <script>
   import addUserDialog from './addUserDialog'
+  import addMoneyDialog from './addMoneyDialog'
 
   export default {
     name: "user",
@@ -110,21 +128,32 @@
             label: '业务员',
             value: 1
           },
-        ]
+        ],
+        addMoneyShow: false,
+        userEmail: ''
       }
     },
     components: {
       'v-addUserDialog': addUserDialog,
+      'v-addMoneyDialog': addMoneyDialog,
     },
     methods: {
       handleFormClose(code) {
         if (code == "addUserDialog") {
           this.addUserShow = false;
         }
+        if (code == "addMoneyDialog") {
+          this.addMoneyShow = false;
+        }
       },
       async handleFormConfirm(code, data) {
         if (code == "addUserDialog") {
           this.addUserShow = false;
+          this.page = 1;
+          await this.getListData()
+        }
+        if (code == "addMoneyDialog") {
+          this.addMoneyShow = false;
           this.page = 1;
           await this.getListData()
         }
@@ -218,6 +247,16 @@
 
           });
         }
+        if (command[1] == "addBalance") {
+          this.addMoneyShow = true;
+          this.formTitle = '添加余额';
+          this.formData = command[0];
+        }
+        if (command[1] == "addMoney") {
+          this.addMoneyShow = true;
+          this.formTitle = '充值';
+          this.formData = command[0];
+        }
       },
       async forbidden(row) {
         await this.$axios.post(process.env.API_BASE + 'user/forbidden?userId=' + row.id)
@@ -263,7 +302,13 @@
             return '停用'
           }
         }
-      }
+      },
+      getUser() {
+        let user = JSON.parse(localStorage.getItem('user'));
+        if (user) {
+          this.userEmail = user.email
+        }
+      },
     },
     async created() {
       const loading = this.$loading({
@@ -272,6 +317,7 @@
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       });
+      this.getUser();
       await this.getListData();
       loading.close();
     }

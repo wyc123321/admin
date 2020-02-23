@@ -2,7 +2,7 @@
   <div class="root">
     <div class="search">
       <div>
-        <span>收货日期：</span>
+        <span>填表日期：</span>
         <el-date-picker
           size="mini"
           v-model="formData.arrivalDate"
@@ -34,7 +34,17 @@
             :value="item.id">
           </el-option>
         </el-select>
-        <el-button type="primary" icon="el-icon-search" @click="search" size="mini">搜索</el-button>
+        <span class="span2">价格：</span>
+        <el-select v-model="formData.freightUnit" :clearable="true" @change="changeFreight" filterable placeholder="请选择"
+                   size="mini">
+          <el-option
+            v-for="item in freightUnitList"
+            :key="item"
+            :label="item"
+            :value="item">
+          </el-option>
+        </el-select>
+        <!--<el-button type="primary" icon="el-icon-search" @click="search" size="mini">搜索</el-button>-->
       </div>
       <div>
         <el-button type="primary" icon="el-icon-download" size="mini" @click="handleExport">下载</el-button>
@@ -78,7 +88,7 @@
         header-align="center"
         align="center"
         :formatter="formatter"
-        label="收货日期">
+        label="填表日期">
       </el-table-column>
       <el-table-column
         prop="deliverTon"
@@ -154,11 +164,13 @@
         formData: {
           arrivalDate: '',
           endAddressId: "",
-          startAddressId: ""
+          startAddressId: "",
+          freightUnit: "",
         },
         tableData: [],
         page: 1,
-        addressList: []
+        addressList: [],
+        freightUnitList: [],
       }
     },
     methods: {
@@ -166,7 +178,8 @@
         let form = {
           "arrivalDate": this.formData.arrivalDate,
           "endAddressId": this.formData.endAddressId,
-          "startAddressId": this.formData.startAddressId
+          "startAddressId": this.formData.startAddressId,
+          "freightUnit": this.formData.freightUnit
         };
         let formData = JSON.parse(JSON.stringify(form));
         for (var key in formData) {
@@ -200,8 +213,33 @@
 
         })
       },
+      async getFreightUnitList() {
+        let form = {
+          "arrivalDate": this.formData.arrivalDate,
+          "endAddressId": this.formData.endAddressId,
+          "startAddressId": this.formData.startAddressId
+        };
+        let formData = JSON.parse(JSON.stringify(form));
+        await this.$axios.post(process.env.API_BASE + '/wayBill/getFreightUnitList', formData).then(response => {
+          if (response.status == '200') {
+            this.freightUnitList = response.data;
+          } else {
+            this.$message.error(response.data);
+          }
+        }).catch((error) => {
+
+        })
+      },
       async search() {
-        await this.getListData()
+        this.freightUnitList = [];
+        this.formData.freightUnit = '';
+        if (this.formData.endAddressId && this.formData.startAddressId) {
+          await this.getFreightUnitList()
+        }
+        await this.getListData();
+      },
+      async changeFreight() {
+        await this.getListData();
       },
       async changeDate() {
         const loading = this.$loading({
@@ -211,6 +249,11 @@
           background: 'rgba(0, 0, 0, 0.7)'
         });
         this.page = 1;
+        this.freightUnitList = [];
+        this.formData.freightUnit = '';
+        if (this.formData.endAddressId && this.formData.startAddressId) {
+          await this.getFreightUnitList()
+        }
         await this.getListData();
         loading.close();
       },
