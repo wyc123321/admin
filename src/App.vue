@@ -2,7 +2,7 @@
   <div id="app">
     <router-view/>
     <footer class="footer" v-if="$route.meta.isShow">
-      Copyright ©2020xxxx 京ICP备xxxxx号 | 联系我们 help@xxxxx
+      Copyright2020 鄂尔多斯市通茂煤炭运销有限公司版权所有
     </footer>
   </div>
 </template>
